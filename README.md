@@ -60,10 +60,16 @@ GhostCUA bypasses macOS WindowServer layer-switching through deep OS-level primi
 
 ---
 
-## Supported Applications
+## Supported Applications (Shipped Out-of-the-Box)
 
-- **Google Gemini Desktop (`com.google.GeminiMacOS`)**: Flagship implementation included (`gemini_background.py`). Supports videos, images, PDFs, audio, documents, and text-only queries.
-- **Meta AI / ChatGPT / Claude / Any Mac App**: Follow the zero-shot guide in [`AGENT.md`](AGENT.md) to add background automation for any macOS desktop app in minutes.
+1. **Google Gemini Desktop (`com.google.GeminiMacOS`)**: 
+   - Script: `gemini_background.py` | MCP: `gemini_mcp.py`
+   - Multimodal video analysis, images, PDFs, audio, documents, and text queries.
+2. **Meta AI Desktop (`com.meta.endo.vanilla`)**:
+   - Script: `meta_ai_background.py` | MCP: `meta_ai_mcp.py`
+   - Deep research on Instagram trends, audience sentiment, and creator analytics using Meta AI's native **Thinking mode**. Zero Instagram ban risk.
+3. **ChatGPT / Claude / Any Native App**:
+   - Follow the zero-shot recipe in [`AGENT.md`](AGENT.md) to build background automation for any macOS application in minutes.
 
 ---
 
@@ -86,7 +92,16 @@ pip install -r requirements.txt
 
 ### 3. Usage Examples
 
-**Analyze a video in the background:**
+**Research Instagram trends via Meta AI (Thinking mode):**
+```bash
+python meta_ai_background.py \
+  --prompt "What are the top 3 trending reel formats on Instagram right now?" \
+  --out "instagram_trends.txt" \
+  --new-chat \
+  --json
+```
+
+**Analyze a video in the background via Gemini:**
 ```bash
 python gemini_background.py \
   --file "/path/to/video.mp4" \
@@ -95,7 +110,7 @@ python gemini_background.py \
   --json
 ```
 
-**Text-only query (no file):**
+**Text-only query via Gemini:**
 ```bash
 python gemini_background.py \
   --prompt "Explain zero-copy serialization in 1 sentence." \
@@ -111,20 +126,21 @@ To connect GhostCUA to **Claude Code, Cursor, Zed, Codex, or Antigravity**, add 
 ```json
 {
   "mcpServers": {
-    "ghost-cua": {
+    "ghost-cua-gemini": {
       "command": "/path/to/ghost-cua/.venv/bin/python",
       "args": ["/path/to/ghost-cua/gemini_mcp.py"]
+    },
+    "ghost-cua-meta-ai": {
+      "command": "/path/to/ghost-cua/.venv/bin/python",
+      "args": ["/path/to/ghost-cua/meta_ai_mcp.py"]
     }
   }
 }
 ```
 
-### Available Tool
-- `gemini_query`:
-  - `prompt` (string, required): Instructions or prompt.
-  - `file_path` (string, optional): Local file to attach (video, image, doc, pdf, audio).
-  - `output_path` (string, optional): Path to save response.
-  - `new_chat` (boolean, optional): Whether to start in a fresh chat.
+### Available Tools
+- `gemini_query`: Multimodal video/image/doc analysis & general reasoning.
+- `meta_ai_research`: Deep Instagram research, trending reel hooks, and audience sentiment in Thinking mode.
 
 ---
 
