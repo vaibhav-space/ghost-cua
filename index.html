@@ -296,7 +296,7 @@
       margin-top: 4px;
     }
 
-    /* Live Interactive macOS Stage (Hero Demo) */
+    /* Live Developer Terminal Stage (Hero Showcase) */
     .hero-demo-stage {
       max-width: 1100px;
       margin: 0 auto 80px;
@@ -317,12 +317,14 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 12px 18px;
+      padding: 10px 18px;
+      gap: 16px;
     }
 
     .traffic-lights {
       display: flex;
       gap: 8px;
+      flex-shrink: 0;
     }
 
     .traffic-dot {
@@ -334,38 +336,47 @@
     .traffic-min { background: #ffbd2e; border: 1px solid #dea123; }
     .traffic-max { background: #27c93f; border: 1px solid #1aab29; }
 
-    .os-title-text {
-      font-size: 0.82rem;
+    .hero-tab-group {
+      display: flex;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 3px;
+      border-radius: var(--radius-sm);
+    }
+
+    .hero-tab {
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      font-family: var(--font-mono);
       color: #8b949e;
-      font-family: var(--font-mono);
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s ease;
     }
 
-    .os-stage-body {
-      display: grid;
-      grid-template-columns: 1.15fr 1fr;
-      min-height: 440px;
+    .hero-tab:hover {
+      color: #f0f6fc;
+      background: rgba(255, 255, 255, 0.06);
     }
 
-    /* Left: Claude Code Live Terminal */
-    .stage-terminal {
+    .hero-tab.active {
+      background: #21262d;
+      color: #f0f6fc;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    }
+
+    .terminal-body-full {
       background: #090c10;
-      padding: 24px;
+      padding: 26px 30px;
       font-family: var(--font-mono);
-      font-size: 0.85rem;
-      line-height: 1.6;
+      font-size: 0.88rem;
+      line-height: 1.65;
       color: #c9d1d9;
-      border-right: 1px solid rgba(255, 255, 255, 0.08);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-
-    .terminal-scroll {
-      overflow-y: auto;
-      max-height: 380px;
+      min-height: 380px;
+      overflow-x: auto;
       white-space: pre-wrap;
     }
 
@@ -374,135 +385,15 @@
     .term-gemini { color: #7ee787; }
     .term-success { color: #3fb950; font-weight: 600; }
     .term-accent { color: #d2a8ff; }
-    .term-dim { color: #6e7681; }
-
-    /* Right: Simulated macOS Target App & Focus Radar */
-    .stage-radar {
-      background: #10141c;
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-
-    .radar-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-    }
-
-    .radar-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 10px;
-      border-radius: var(--radius-full);
-      font-size: 0.76rem;
-      font-weight: 600;
-      font-family: var(--font-mono);
-      background: rgba(46, 160, 67, 0.15);
-      color: #3fb950;
-      border: 1px solid rgba(46, 160, 67, 0.3);
-    }
-
-    .radar-badge.active-bad {
-      background: rgba(248, 81, 73, 0.15);
-      color: #ff7b72;
-      border: 1px solid rgba(248, 81, 73, 0.3);
-    }
-
-    .radar-visual-screen {
-      background: #06090f;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: var(--radius-sm);
-      height: 220px;
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .window-stack-ide {
-      position: absolute;
-      width: 76%;
-      height: 75%;
-      border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      background: #161b22;
-      padding: 12px;
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      z-index: 10;
-    }
-
-    .window-stack-target {
-      position: absolute;
-      width: 76%;
-      height: 75%;
-      border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      background: #1f242c;
-      padding: 12px;
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      transform: translate(24px, 20px) scale(0.92);
-      opacity: 0.45;
-      z-index: 1;
-    }
-
-    .radar-cursor {
-      position: absolute;
-      width: 18px;
-      height: 18px;
-      pointer-events: none;
-      z-index: 20;
-      transition: all 0.35s cubic-bezier(0.2, 0, 0, 1);
-      transform: translate(30px, 30px);
-    }
-
-    .radar-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 18px;
-    }
-
-    .radar-btn {
-      flex: 1;
-      padding: 8px 14px;
-      border-radius: var(--radius-sm);
-      font-size: 0.84rem;
-      font-weight: 600;
-      cursor: pointer;
-      border: 1px solid transparent;
-      transition: all 0.15s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      font-family: var(--font-display);
-    }
-
-    .radar-btn-play {
-      background: #1f6f2e;
-      color: #ffffff;
-    }
-    .radar-btn-play:hover {
-      background: #195e26;
-    }
-
-    .radar-btn-toggle {
-      background: #21262d;
-      color: #c9d1d9;
-      border-color: #30363d;
-    }
-    .radar-btn-toggle:hover {
-      background: #30363d;
+    .term-dim { color: #8b949e; }
+    .term-box {
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.03);
+      padding: 12px 16px;
+      border-radius: 6px;
+      margin: 12px 0;
+      color: #e6edf3;
+      display: block;
     }
 
     /* Head-to-Head Comparison Architecture */
@@ -1039,7 +930,7 @@
         </div>
       </div>
 
-      <!-- Live Interactive macOS Stage -->
+      <!-- Live Developer Stage (Hero Showcase) -->
       <div id="interactive-stage" class="hero-demo-stage">
         <div class="os-titlebar">
           <div class="traffic-lights">
@@ -1047,86 +938,19 @@
             <div class="traffic-dot traffic-min"></div>
             <div class="traffic-dot traffic-max"></div>
           </div>
-          <div class="os-title-text">
-            <span>macOS Sonoma (Darwin 24.3.0) — Process-Targeted IPC</span>
+          <div class="hero-tab-group">
+            <button class="hero-tab active" data-tab="claude" onclick="switchHeroTab('claude', this)">claude-code (CLI)</button>
+            <button class="hero-tab" data-tab="meta" onclick="switchHeroTab('meta', this)">meta_ai_mcp.py</button>
+            <button class="hero-tab" data-tab="gemini" onclick="switchHeroTab('gemini', this)">gemini_mcp.py</button>
+            <button class="hero-tab" data-tab="agent" onclick="switchHeroTab('agent', this)">AGENT.md (Universal Blueprint)</button>
           </div>
-          <div style="font-size: 0.74rem; color: #7ee787; font-family: var(--font-mono); font-weight: 600;">
-            ● 0 FOCUS THEFT
-          </div>
-        </div>
-
-        <div class="os-stage-body">
-          <!-- Left: Claude Terminal -->
-          <div class="stage-terminal">
-            <div>
-              <div style="font-size: 0.74rem; color: #8b949e; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 6px;">
-                ACTIVE AGENT: claude-code (CLI)
-              </div>
-              <div class="terminal-scroll" id="term-stream"></div>
-            </div>
-
-            <div style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px; font-size: 0.78rem; color: #8b949e;">
-              Status: <span id="term-status-label" style="color: #3fb950; font-weight: 600;">Streaming background results</span>
-            </div>
-          </div>
-
-          <!-- Right: macOS Target App Radar -->
-          <div class="stage-radar">
-            <div class="radar-header">
-              <span style="font-size: 0.78rem; color: #8b949e; font-family: var(--font-mono);">DESKTOP RADAR</span>
-              <div id="radar-mode-badge" class="radar-badge">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                GHOSTCUA ACTIVE
-              </div>
-            </div>
-
-            <div class="radar-visual-screen">
-              <!-- Mock IDE Frontmost -->
-              <div class="window-stack-ide" id="radar-ide">
-                <div style="display: flex; gap: 4px; align-items: center; margin-bottom: 6px;">
-                  <div style="width: 8px; height: 8px; border-radius: 50%; background: #475569;"></div>
-                  <span style="font-size: 0.7rem; color: #8b949e;">VS Code — src/index.ts</span>
-                </div>
-                <div style="background: rgba(255,255,255,0.05); height: 8px; width: 65%; border-radius: 3px;"></div>
-                <div style="background: rgba(255,255,255,0.05); height: 8px; width: 80%; border-radius: 3px;"></div>
-                <div style="background: rgba(255,255,255,0.05); height: 8px; width: 45%; border-radius: 3px;"></div>
-                <div id="radar-ide-indicator" style="font-size: 0.7rem; color: #ff7b72; margin-top: auto; font-weight: 600; display: none;">
-                  FOCUS STOLEN BY AUTOMATION
-                </div>
-              </div>
-
-              <!-- Mock Target App Background -->
-              <div class="window-stack-target" id="radar-target">
-                <div style="display: flex; gap: 4px; align-items: center; margin-bottom: 6px;">
-                  <div style="width: 8px; height: 8px; border-radius: 50%; background: #58a6ff;"></div>
-                  <span style="font-size: 0.7rem; color: #79c0ff;" id="radar-target-label">Meta AI (Thinking Mode)</span>
-                </div>
-                <div style="background: rgba(88,166,255,0.12); height: 24px; border-radius: 4px; border: 1px dashed rgba(88,166,255,0.3); display: flex; align-items: center; padding: 0 8px; font-size: 0.64rem; color: #a5d6ff;">
-                  Live Instagram Indexing...
-                </div>
-              </div>
-
-              <!-- Hardware Pointer -->
-              <svg class="radar-cursor" id="radar-cursor" viewBox="0 0 24 24" fill="white" stroke="black" stroke-width="1.5">
-                <path d="M3 3l7 18 3-7 7-3L3 3z"/>
-              </svg>
-            </div>
-
-            <div class="radar-actions">
-              <button class="radar-btn radar-btn-play" onclick="runSimAnimation('meta')">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                Test Instagram Query
-              </button>
-              <button class="radar-btn radar-btn-play" onclick="runSimAnimation('gemini')">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                Test Video QA
-              </button>
-              <button class="radar-btn radar-btn-toggle" id="radar-btn-mode" onclick="toggleSimFailureMode()">
-                Simulate Flaw
-              </button>
-            </div>
+          <div style="font-size: 0.76rem; color: #3fb950; font-family: var(--font-mono); font-weight: 600; display: flex; align-items: center; gap: 6px;">
+            <span style="width: 7px; height: 7px; border-radius: 50%; background: #3fb950;"></span>
+            <span>0 Focus Theft</span>
           </div>
         </div>
+
+        <div class="terminal-body-full" id="hero-terminal-content"></div>
       </div>
     </div>
   </section>
@@ -1218,15 +1042,15 @@
       </div>
 
       <div class="workflow-tab-bar">
-        <button class="workflow-tab active" onclick="switchWorkflowTab('instagram')">
+        <button class="workflow-tab active" data-tab="instagram" onclick="switchWorkflowTab('instagram', this)">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
           1. Instagram Reel Trends (Meta AI)
         </button>
-        <button class="workflow-tab" onclick="switchWorkflowTab('video')">
+        <button class="workflow-tab" data-tab="video" onclick="switchWorkflowTab('video', this)">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
           2. Continuous Video QA (Gemini)
         </button>
-        <button class="workflow-tab" onclick="switchWorkflowTab('universal')">
+        <button class="workflow-tab" data-tab="universal" onclick="switchWorkflowTab('universal', this)">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
           3. Automate ANY App in 5 Mins (AGENT.md)
         </button>
@@ -1384,119 +1208,117 @@
   </footer>
 
   <script>
-    // Live Terminal Simulation Scripts
-    const termStream = document.getElementById('term-stream');
-    const termStatus = document.getElementById('term-status-label');
-    const radarIde = document.getElementById('radar-ide');
-    const radarTarget = document.getElementById('radar-target');
-    const radarCursor = document.getElementById('radar-cursor');
-    const radarBadge = document.getElementById('radar-badge');
-    const radarBtnMode = document.getElementById('radar-btn-mode');
-    const radarIdeIndicator = document.getElementById('radar-ide-indicator');
-    const radarTargetLabel = document.getElementById('radar-target-label');
+    // Hero Terminal Showcase Tabs
+    const heroContent = document.getElementById('hero-terminal-content');
 
-    let isFailureMode = false;
+    const heroTabContent = {
+      claude: `<span class="term-dim"># Claude Code CLI session executing in active project terminal</span>
+<span class="term-prompt">user@macbook</span> <span class="term-meta">claude</span>
+Claude Code (v0.2.29) — Anthropic Research Preview
+Type /help for help, or ask anything about your workspace.
 
-    const scenarios = {
-      meta: {
-        target: 'Meta AI (Thinking Mode)',
-        cmd: `claude "Find the top 3 trending Reel formats on Instagram right now in 2026"`,
-        logs: [
-          `[14:23:09] Initial State | Frontmost: com.microsoft.VSCode`,
-          `[14:23:09] Calling tool: meta_ai_research via stdio FastMCP`,
-          `[14:23:09] Targeting PID 806 (com.meta.endo.vanilla) via Accessibility`,
-          `[14:23:10] Injected prompt into AXTextArea (Thinking Mode confirmed)`,
-          `[14:23:11] Verified submission: chat-send triggered; composer cleared`,
-          `[14:23:25] Meta AI Thinking complete -> Extracted 13,154 characters`,
-          `[14:23:25] Restored user pasteboard losslessly`,
-          `[14:23:25] Final State | Frontmost: com.microsoft.VSCode (0 FOCUS THEFT)`
-        ],
-        output: `Top 3 2026 Instagram Reel Trends:\n1. Split-Contrast Narrative Hooks (1.8x retention)\n2. Looping Audio Micro-Payoffs (4.2M shares avg)\n3. POV Silent Coding / Architecture Walkthroughs`
-      },
-      gemini: {
-        target: 'Google Gemini (Multimodal)',
-        cmd: `claude "Audit pacing, cuts, and audio sync of demo.mp4"`,
-        logs: [
-          `[14:25:01] Initial State | Frontmost: com.microsoft.VSCode`,
-          `[14:25:01] Calling tool: gemini_query via stdio FastMCP`,
-          `[14:25:02] Staging /tmp/demo.mp4 via process-targeted AppleEvent (aevt/odoc)`,
-          `[14:25:02] Flag: kAENeverInteract (0 Space swooshes)`,
-          `[14:25:04] Video ingested -> Gemini multimodal foundation model processing`,
-          `[14:25:28] Generation complete -> Extracted 487 chars scene feedback`,
-          `[14:25:28] Final State | Frontmost: com.microsoft.VSCode (0 FOCUS THEFT)`
-        ],
-        output: `Video Audit Result:\n- Total Duration: 0:18.04\n- Hook Cadence: Strong 0:00-0:03 visual hook\n- Audio Sync: Dialogue perfectly locked to waveform\n- Overall Polish: 9.2/10 production rating`
-      }
+<span class="term-prompt">></span> Find the top 3 trending Reel formats on Instagram right now in 2026
+
+<div class="term-box">
+  <span style="color: #79c0ff; font-weight: 600;">Tool Call:</span> <code>ghost-cua-meta-ai / meta_ai_research</code>
+  <span class="term-dim">Query:</span> "Top 3 trending Reel formats on Instagram 2026"
+  <span class="term-dim">Mode:</span> Thinking (Live Instagram Index) | <span style="color: #3fb950;">PID 806 (Background, 0 Focus Theft)</span>
+</div>
+<span class="term-success">✔ Injected prompt into native AXTextArea via Darwin Accessibility IPC</span>
+<span class="term-success">✔ Verified submission: Composer cleared, Thinking mode active</span>
+<span class="term-success">✔ Meta AI Thinking complete -> Extracted 13,154 characters verified research</span>
+<span class="term-success">✔ Restored user clipboard losslessly</span>
+
+<span style="color: #f0f6fc; font-weight: 600;">Based on Meta AI's live indexing of Instagram creator reels:</span>
+
+<span style="color: #d2a8ff; font-weight: 600;">1. POV Silent Architecture Walkthroughs (3.2x saves)</span>
+   Zero talking head. Continuous screen recording of code diffs and terminal workflows paired
+   with ambient keyboard audio. Developers save these 3.2x more than talking-head videos.
+
+<span style="color: #d2a8ff; font-weight: 600;">2. Contrast-Pivoted Video Essays (1.8x retention)</span>
+   Opens in the first 2 seconds with a contrarian assertion ("Traditional CUAs break your PC"),
+   followed by immediate visual proof of the alternative.
+
+<span style="color: #d2a8ff; font-weight: 600;">3. Loop-Back Conclusion Hooks</span>
+   The final spoken sentence flows grammatically back into the opening frame, driving replay
+   loops and algorithmic feed re-distribution.`,
+
+      meta: `<span class="term-dim"># ghost-cua / meta_ai_mcp.py — Native Meta AI Desktop MCP Server</span>
+<span style="color: #ff7b72;">from</span> mcp.server.fastmcp <span style="color: #ff7b72;">import</span> FastMCP
+<span style="color: #ff7b72;">from</span> meta_ai_background <span style="color: #ff7b72;">import</span> execute_query
+
+mcp = FastMCP(<span style="color: #a5d6ff;">"ghost-cua-meta-ai"</span>)
+
+<span style="color: #d2a8ff;">@mcp.tool()</span>
+<span style="color: #ff7b72;">def</span> <span style="color: #79c0ff;">meta_ai_research</span>(query: <span style="color: #79c0ff;">str</span>, thinking_mode: <span style="color: #79c0ff;">bool</span> = <span style="color: #79c0ff;">True</span>, timeout: <span style="color: #79c0ff;">int</span> = 360) -> <span style="color: #79c0ff;">str</span>:
+    <span style="color: #8b949e;">"""Run live Instagram and web research through Meta AI desktop app with zero focus theft.
+    
+    Args:
+        query: Research query (e.g., 'Top trending reel formats on Instagram')
+        thinking_mode: Whether to verify and enable Thinking mode for deep synthesis
+        timeout: Maximum seconds to wait for deep reasoning
+    """</span>
+    result = execute_query(query, thinking_mode=thinking_mode, timeout=timeout)
+    <span style="color: #ff7b72;">return</span> result[<span style="color: #a5d6ff;">"response"</span>]
+
+<span style="color: #ff7b72;">if</span> __name__ == <span style="color: #a5d6ff;">"__main__"</span>:
+    mcp.run()`,
+
+      gemini: `<span class="term-dim"># ghost-cua / gemini_mcp.py — Native Gemini Desktop MCP Server</span>
+<span style="color: #ff7b72;">from</span> mcp.server.fastmcp <span style="color: #ff7b72;">import</span> FastMCP
+<span style="color: #ff7b72;">from</span> gemini_background <span style="color: #ff7b72;">import</span> execute_query
+
+mcp = FastMCP(<span style="color: #a5d6ff;">"ghost-cua-gemini"</span>)
+
+<span style="color: #d2a8ff;">@mcp.tool()</span>
+<span style="color: #ff7b72;">def</span> <span style="color: #79c0ff;">gemini_query</span>(prompt: <span style="color: #79c0ff;">str</span>, media_path: <span style="color: #79c0ff;">str</span> = <span style="color: #79c0ff;">None</span>, timeout: <span style="color: #79c0ff;">int</span> = 180) -> <span style="color: #79c0ff;">str</span>:
+    <span style="color: #8b949e;">"""Query Google Gemini in the background via Carbon AppleEvents with zero mouse movement.
+    
+    Args:
+        prompt: Question or analysis directive
+        media_path: Optional path to video (.mp4/.mov), image, doc, or audio file
+        timeout: Maximum wait time for response generation
+    """</span>
+    result = execute_query(prompt, media_path=media_path, timeout=timeout)
+    <span style="color: #ff7b72;">return</span> result[<span style="color: #a5d6ff;">"response"</span>]
+
+<span style="color: #ff7b72;">if</span> __name__ == <span style="color: #a5d6ff;">"__main__"</span>:
+    mcp.run()`,
+
+      agent: `<span class="term-dim"># AGENT.md — Universal 5-Phase macOS Background Automation Recipe</span>
+
+<span style="color: #79c0ff; font-weight: 600;">Phase 1: Process Discovery</span>
+  Find running application via NSWorkspace.sharedWorkspace().runningApplications() by bundle ID.
+  Never call activateWithOptions: — keep the target app backgrounded.
+
+<span style="color: #79c0ff; font-weight: 600;">Phase 2: Target-Directed Event Staging</span>
+  When attaching files or opening documents, dispatch direct Carbon AppleEvents (aevt/odoc)
+  with kAENeverInteract (0x00000010) directly to the target PID.
+  Avoid /usr/bin/open to eliminate Mission Control Space swooshes.
+
+<span style="color: #79c0ff; font-weight: 600;">Phase 3: Recursive Accessibility DFS</span>
+  Traverse AXUIElement hierarchy using AXUIElementCopyAttributeValue.
+  Match elements by AXRole, AXIdentifier, and AXSubrole without screen capture.
+
+<span style="color: #79c0ff; font-weight: 600;">Phase 4: Verified Submission State Machine</span>
+  Set text via AXUIElementSetAttributeValue. Trigger submit via AXUIElementPerformAction(kAXPressAction).
+  Wait for composer value clearance and emergence of Stop button before entering poll phase.
+
+<span style="color: #79c0ff; font-weight: 600;">Phase 5: Lossless Pasteboard Restoration</span>
+  Snapshot user's NSPasteboard contents prior to extraction.
+  Trigger native Copy button on completed response, read result, and restore user pasteboard immediately.`
     };
 
-    function runSimAnimation(type) {
-      const data = scenarios[type];
-      radarTargetLabel.innerText = data.target;
+    function switchHeroTab(key, el) {
+      const tabs = document.querySelectorAll('.hero-tab');
+      tabs.forEach(t => t.classList.remove('active'));
 
-      if (!isFailureMode) {
-        termStatus.innerText = 'Streaming background results';
-        termStatus.style.color = '#3fb950';
+      const activeBtn = el || document.querySelector(`.hero-tab[data-tab="${key}"]`) || tabs[0];
+      if (activeBtn) activeBtn.classList.add('active');
 
-        radarIde.style.transform = 'translate(0, 0) scale(1)';
-        radarIde.style.opacity = '1';
-        radarIde.style.zIndex = '10';
-
-        radarTarget.style.transform = 'translate(24px, 20px) scale(0.92)';
-        radarTarget.style.opacity = '0.45';
-        radarTarget.style.zIndex = '1';
-
-        radarIdeIndicator.style.display = 'none';
-        radarCursor.style.transform = 'translate(30px, 30px)';
-
-        termStream.innerHTML = `
-<span class="term-prompt">user@macbook</span> <span class="term-meta">${data.cmd}</span>
-
-<span class="term-success">GHOSTCUA ZERO-INTERRUPTION DISPATCH:</span>
-${data.logs.map(l => `<span class="term-dim">${l}</span>`).join('\n')}
-
-<span class="term-accent">${data.output}</span>
-`;
-      } else {
-        termStatus.innerText = 'KEYBOARD FOCUS LOST';
-        termStatus.style.color = '#ff7b72';
-
-        radarIde.style.transform = 'translate(24px, 20px) scale(0.92)';
-        radarIde.style.opacity = '0.45';
-        radarIde.style.zIndex = '1';
-
-        radarTarget.style.transform = 'translate(0, 0) scale(1)';
-        radarTarget.style.opacity = '1';
-        radarTarget.style.zIndex = '10';
-
-        radarIdeIndicator.style.display = 'block';
-        radarCursor.style.transform = 'translate(140px, 110px)';
-
-        termStream.innerHTML = `
-<span class="term-prompt">user@macbook</span> <span class="term-meta">${data.cmd}</span>
-
-<span style="color: #ff7b72; font-weight: 700;">TRADITIONAL CUA DETECTED:</span>
-<span class="term-dim">[14:20:01] Launching ScreenCaptureKit loop...</span>
-<span style="color: #ff7b72;">[14:20:02] STEALING MOUSE POINTER: Moving to (450, 720)</span>
-<span style="color: #ff7b72;">[14:20:03] MISSION CONTROL SPACE SWOOSH TRIGGERED!</span>
-<span class="term-dim">[14:20:04] Window forced to foreground: ${data.target}</span>
-<span style="color: #ff7b72;">[14:20:07] USER TRIED TO TYPE IN VS CODE: KEYSTROKES SENT TO VOID</span>
-<span class="term-dim">[14:20:10] Waiting for screen capture OCR loop...</span>
-`;
+      if (heroContent && heroTabContent[key]) {
+        heroContent.innerHTML = heroTabContent[key];
       }
-    }
-
-    function toggleSimFailureMode() {
-      isFailureMode = !isFailureMode;
-      if (isFailureMode) {
-        radarBtnMode.innerText = 'Reset to GhostCUA';
-        radarBtnMode.style.background = '#da3633';
-        radarBtnMode.style.color = '#ffffff';
-      } else {
-        radarBtnMode.innerText = 'Simulate Flaw';
-        radarBtnMode.style.background = '#21262d';
-        radarBtnMode.style.color = '#c9d1d9';
-      }
-      runSimAnimation('meta');
     }
 
     // Workflows Interactive Switcher
@@ -1521,24 +1343,30 @@ ${data.logs.map(l => `<span class="term-dim">${l}</span>`).join('\n')}
       }
     };
 
-    function switchWorkflowTab(key) {
-      document.querySelectorAll('.workflow-tab').forEach(b => b.classList.remove('active'));
-      event.currentTarget.classList.add('active');
+    function switchWorkflowTab(key, el) {
+      const tabs = document.querySelectorAll('.workflow-tab');
+      tabs.forEach(b => b.classList.remove('active'));
+
+      const activeBtn = el || document.querySelector(`.workflow-tab[data-tab="${key}"]`) || tabs[0];
+      if (activeBtn) activeBtn.classList.add('active');
 
       const data = workflowData[key];
+      if (!data) return;
       const container = document.getElementById('workflow-content');
-      container.innerHTML = `
-        <div class="workflow-info">
-          <h3>${data.title}</h3>
-          <div class="workflow-pain-callout">
-            ${data.pain}
+      if (container) {
+        container.innerHTML = `
+          <div class="workflow-info">
+            <h3>${data.title}</h3>
+            <div class="workflow-pain-callout">
+              ${data.pain}
+            </div>
+            <p>${data.desc}</p>
           </div>
-          <p>${data.desc}</p>
-        </div>
-        <div class="workflow-code-view">
-          <pre style="white-space: pre-wrap;"><code>${data.code}</code></pre>
-        </div>
-      `;
+          <div class="workflow-code-view">
+            <pre style="white-space: pre-wrap;"><code>${data.code}</code></pre>
+          </div>
+        `;
+      }
     }
 
     // Copy MCP config helper
@@ -1559,8 +1387,8 @@ ${data.logs.map(l => `<span class="term-dim">${l}</span>`).join('\n')}
         const span = btn.querySelector('span');
         const orig = span.innerText;
         span.innerText = 'Copied!';
-        btn.style.borderColor = '#059669';
-        btn.style.color = '#059669';
+        btn.style.borderColor = '#047857';
+        btn.style.color = '#047857';
         setTimeout(() => {
           span.innerText = orig;
           btn.style.borderColor = '';
@@ -1569,8 +1397,14 @@ ${data.logs.map(l => `<span class="term-dim">${l}</span>`).join('\n')}
       });
     }
 
-    // Init
-    runSimAnimation('meta');
+    // Initialize both tab sets on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      switchHeroTab('claude');
+      switchWorkflowTab('instagram');
+    });
+
+    // Fallback immediate execution
+    switchHeroTab('claude');
     switchWorkflowTab('instagram');
   </script>
 </body>
