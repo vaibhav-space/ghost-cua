@@ -1,0 +1,4 @@
+pyobjc-framework-Cocoa>=13.0
+pyobjc-framework-ApplicationServices>=13.0
+pyobjc-framework-Quartz>=13.0
+mcp>=2.3.0

@@ -1,0 +1,21 @@
+# Environments
+.venv/
+env/
+venv/
+
+# Bytecode & Caches
+__pycache__/
+*.py[cod]
+
+# Personal media & test logs (prevent accidental leak of webcam/personal videos)
+*.mp4
+*.mov
+*.png
+*.jpg
+*.jpeg
+*.txt
+!requirements.txt
+*.log
+
+# macOS metadata
+.DS_Store
