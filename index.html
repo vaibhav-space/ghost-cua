@@ -432,32 +432,30 @@
       gap: 8px;
     }
 
-    .video-badge {
+    .video-sound-btn {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 4px 10px;
+      padding: 5px 12px;
       border-radius: var(--radius-full);
-      background: rgba(35, 134, 54, 0.2);
-      border: 1px solid rgba(46, 160, 67, 0.35);
-      color: #3fb950;
-      font-size: 0.74rem;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #f0f6fc;
+      font-size: 0.78rem;
       font-family: var(--font-mono);
-      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
     }
 
-    .video-badge .pulse-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #3fb950;
-      box-shadow: 0 0 8px #3fb950;
-      animation: pulseLive 2s infinite ease-in-out;
+    .video-sound-btn:hover {
+      background: rgba(255, 255, 255, 0.16);
+      border-color: rgba(255, 255, 255, 0.25);
     }
 
-    @keyframes pulseLive {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(0.85); }
+    .video-sound-btn.unmuted {
+      background: rgba(37, 99, 235, 0.25);
+      border-color: rgba(56, 139, 253, 0.5);
+      color: #79c0ff;
     }
 
     .video-screen {
@@ -466,6 +464,8 @@
       aspect-ratio: 16 / 9;
       background: #000000;
       overflow: hidden;
+      border-radius: 0 0 var(--radius-md) var(--radius-md);
+      cursor: pointer;
     }
 
     .video-screen video {
@@ -476,61 +476,39 @@
       outline: none;
     }
 
-    .video-meta-bar {
-      padding: 14px 18px;
-      background: #161b22;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 0 0 var(--radius-md) var(--radius-md);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-
-    .video-meta-tags {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .v-pill {
-      font-size: 0.76rem;
-      font-family: var(--font-mono);
-      padding: 4px 10px;
-      border-radius: 6px;
-      background: rgba(255, 255, 255, 0.06);
-      color: #8b949e;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    .v-pill.lead-pill {
-      background: rgba(37, 99, 235, 0.18);
-      border-color: rgba(56, 139, 253, 0.4);
-      color: #79c0ff;
-      font-weight: 600;
-    }
-
-    .btn-download-video {
-      padding: 6px 14px;
-      font-size: 0.78rem;
-      font-family: var(--font-mono);
-      background: rgba(255, 255, 255, 0.08);
-      color: #f0f6fc;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 6px;
-      text-decoration: none;
+    .video-sound-pill {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      z-index: 10;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      transition: all 0.15s ease;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: var(--radius-full);
+      background: rgba(13, 17, 23, 0.82);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: #ffffff;
+      font-size: 0.82rem;
+      font-family: var(--font-display);
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      transition: all 0.2s ease;
     }
 
-    .btn-download-video:hover {
-      background: rgba(255, 255, 255, 0.16);
+    .video-sound-pill:hover {
+      background: rgba(22, 27, 34, 0.95);
+      border-color: rgba(255, 255, 255, 0.3);
+      transform: scale(1.04);
+    }
+
+    .video-sound-pill.unmuted {
+      background: rgba(37, 99, 235, 0.9);
+      border-color: rgba(96, 165, 250, 0.6);
       color: #ffffff;
-      border-color: rgba(255, 255, 255, 0.25);
     }
 
     /* Head-to-Head Comparison Architecture */
@@ -992,8 +970,8 @@
       </a>
 
       <ul class="nav-links">
-        <li><a href="#video-demo">Launch Video</a></li>
-        <li><a href="#interactive-stage">Terminal Demo</a></li>
+        <li><a href="#video-demo">Demo</a></li>
+        <li><a href="#interactive-stage">Terminal</a></li>
         <li><a href="#architecture">Architecture</a></li>
         <li><a href="#workflows">Workflows</a></li>
         <li><a href="#mcp">Claude Code MCP</a></li>
@@ -1030,12 +1008,6 @@
             <line x1="12" y1="19" x2="20" y2="19"/>
           </svg>
           Add to Claude Code via MCP
-        </a>
-        <a href="#video-demo" class="btn btn-secondary" onclick="playLaunchVideo(event)" style="padding: 12px 26px; font-size: 0.96rem; display: inline-flex; align-items: center; gap: 8px;">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-            <polygon points="5 3 19 12 5 21 5 3"/>
-          </svg>
-          Watch 18s Video Demo
         </a>
         <a href="https://github.com/vaibhav-space/ghost-cua" target="_blank" class="btn btn-secondary" style="padding: 12px 26px; font-size: 0.96rem;">
           Clone Open Source Engine
@@ -1074,12 +1046,8 @@
         </div>
       </div>
 
-      <!-- 18-Second Launch Video Showcase -->
+      <!-- Launch Video Showcase -->
       <div style="text-align: center; margin-bottom: 24px;">
-        <div style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 9999px; background: #eff6ff; border: 1px solid #bfdbfe; color: #1d4ed8; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 8px;">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-          Official Launch Demo · 18 Seconds
-        </div>
         <h2 style="font-size: clamp(1.4rem, 2.5vw, 1.85rem); font-weight: 700; color: var(--ink); letter-spacing: -0.02em;">
           See GhostCUA In Action
         </h2>
@@ -1096,33 +1064,36 @@
             <div class="traffic-dot traffic-max"></div>
           </div>
           <div class="video-title-text">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>
-            <span>GhostCUA — 18-Second Launch Demo (1080p · Stereo Audio)</span>
+            <span>GhostCUA in Action</span>
           </div>
-          <div class="video-badge">
-            <span class="pulse-dot"></span>
-            <span>18s · 1080p HD</span>
-          </div>
+          <button id="video-sound-btn" class="video-sound-btn" onclick="toggleVideoSound()" title="Toggle Sound">
+            <span id="sound-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                <line x1="23" y1="9" x2="17" y2="15"></line>
+                <line x1="17" y1="9" x2="23" y2="15"></line>
+              </svg>
+            </span>
+            <span id="sound-text">Unmute</span>
+          </button>
         </div>
 
-        <div class="video-screen">
-          <video id="ghost-cua-video" controls playsinline preload="metadata" poster="assets/ghost-cua-launch.jpg">
+        <div class="video-screen" onclick="toggleVideoSound()">
+          <video id="ghost-cua-video" autoplay loop muted playsinline preload="auto" poster="assets/ghost-cua-launch.jpg">
             <source src="assets/ghost-cua-launch.mp4" type="video/mp4">
-            Your browser does not support HTML5 video.
           </video>
-        </div>
-
-        <div class="video-meta-bar">
-          <div class="video-meta-tags">
-            <span class="v-pill lead-pill">0:00 The Mouse Hijack Flaw</span>
-            <span class="v-pill">0:04 Bass Drop & Architecture</span>
-            <span class="v-pill">0:09 Dual Workstation Proof</span>
-            <span class="v-pill">0:14 Agent Pipeline Close</span>
-          </div>
-          <a href="assets/ghost-cua-launch.mp4" download="ghost-cua-launch.mp4" class="btn-download-video">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Download 1080p MP4 (3.2 MB)
-          </a>
+          <button id="video-sound-pill" class="video-sound-pill" onclick="event.stopPropagation(); toggleVideoSound();" title="Toggle Sound">
+            <svg id="pill-sound-muted" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+              <line x1="23" y1="9" x2="17" y2="15"></line>
+              <line x1="17" y1="9" x2="23" y2="15"></line>
+            </svg>
+            <svg id="pill-sound-unmuted" style="display:none;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 5"></polygon>
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            </svg>
+            <span id="pill-sound-text">Unmute Sound</span>
+          </button>
         </div>
       </div>
 
@@ -1607,16 +1578,46 @@ mcp = FastMCP(<span style="color: #a5d6ff;">"ghost-cua-gemini"</span>)
       });
     }
 
-    // Video smooth scroll & play
-    function playLaunchVideo(e) {
-      if (e) e.preventDefault();
-      const el = document.getElementById('video-demo');
+    // Toggle video audio & sound UI
+    function toggleVideoSound() {
       const v = document.getElementById('ghost-cua-video');
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-      if (v) {
+      if (!v) return;
+      v.muted = !v.muted;
+      updateSoundUI(!v.muted);
+      if (v.paused) {
         v.play().catch(() => {});
+      }
+    }
+
+    function updateSoundUI(isUnmuted) {
+      const btn = document.getElementById('video-sound-btn');
+      const pill = document.getElementById('video-sound-pill');
+      const btnLabel = document.getElementById('sound-text');
+      const pillLabel = document.getElementById('pill-sound-text');
+      const pillMutedSvg = document.getElementById('pill-sound-muted');
+      const pillUnmutedSvg = document.getElementById('pill-sound-unmuted');
+      const btnIcon = document.getElementById('sound-icon');
+
+      if (isUnmuted) {
+        if (btn) btn.classList.add('unmuted');
+        if (pill) pill.classList.add('unmuted');
+        if (btnLabel) btnLabel.innerText = 'Sound On';
+        if (pillLabel) pillLabel.innerText = 'Sound On';
+        if (pillMutedSvg) pillMutedSvg.style.display = 'none';
+        if (pillUnmutedSvg) pillUnmutedSvg.style.display = 'block';
+        if (btnIcon) {
+          btnIcon.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>`;
+        }
+      } else {
+        if (btn) btn.classList.remove('unmuted');
+        if (pill) pill.classList.remove('unmuted');
+        if (btnLabel) btnLabel.innerText = 'Unmute';
+        if (pillLabel) pillLabel.innerText = 'Unmute Sound';
+        if (pillMutedSvg) pillMutedSvg.style.display = 'block';
+        if (pillUnmutedSvg) pillUnmutedSvg.style.display = 'none';
+        if (btnIcon) {
+          btnIcon.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>`;
+        }
       }
     }
 
