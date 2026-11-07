@@ -7,6 +7,9 @@
 [![Platform: macOS](https://img.shields.io/badge/Platform-macOS-black.svg?logo=apple&logoColor=white)](https://apple.com)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg?logo=python&logoColor=white)](https://python.org)
 [![Protocol: MCP](https://img.shields.io/badge/Protocol-MCP-8B5CF6.svg)](https://modelcontextprotocol.io)
+[![Live Demo](https://img.shields.io/badge/Website-Live%20Demo-2563eb.svg)](https://vaibhav-space.github.io/ghost-cua/)
+
+🌐 **[Explore the Interactive Landing Page & Live Simulator →](https://vaibhav-space.github.io/ghost-cua/)**
 
 ---
 
