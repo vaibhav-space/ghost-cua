@@ -9,18 +9,19 @@
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
   <style>
     :root {
-      --bg: #07090e;
-      --bg-card: rgba(15, 23, 42, 0.85);
-      --border-card: rgba(255, 255, 255, 0.12);
+      --bg: #05070c;
+      --bg-card: rgba(13, 17, 28, 0.88);
+      --border-card: rgba(255, 255, 255, 0.14);
       --cyan: #00f2fe;
-      --cyan-glow: rgba(0, 242, 254, 0.4);
+      --cyan-bright: #38bdf8;
+      --cyan-glow: rgba(0, 242, 254, 0.45);
       --emerald: #10b981;
-      --emerald-glow: rgba(16, 185, 129, 0.35);
+      --emerald-glow: rgba(16, 185, 129, 0.4);
       --red: #ef4444;
-      --red-glow: rgba(239, 68, 68, 0.35);
-      --purple: #a855f7;
+      --red-bright: #f87171;
+      --red-glow: rgba(239, 68, 68, 0.5);
+      --purple: #c084fc;
       --white: #ffffff;
-      --gray-light: #e2e8f0;
       --gray-dim: #94a3b8;
       --font-sans: 'Sora', -apple-system, BlinkMacSystemFont, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
@@ -45,37 +46,63 @@
       height: 1080px;
       background: var(--bg);
       overflow: hidden;
+      perspective: 1400px;
     }
 
-    /* Ambient cyber grid background */
+    /* Ambient cyber grid background with radial neon flares */
     .cyber-bg {
       position: absolute;
       inset: 0;
       background-image: 
-        radial-gradient(circle at 50% 20%, rgba(0, 242, 254, 0.12) 0%, transparent 60%),
-        radial-gradient(circle at 80% 80%, rgba(168, 85, 247, 0.1) 0%, transparent 50%),
-        linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
-      background-size: 100% 100%, 100% 100%, 64px 64px, 64px 64px;
+        radial-gradient(circle at 50% 15%, rgba(0, 242, 254, 0.16) 0%, transparent 65%),
+        radial-gradient(circle at 85% 75%, rgba(192, 132, 252, 0.12) 0%, transparent 55%),
+        radial-gradient(circle at 15% 85%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 100% 100%, 54px 54px, 54px 54px;
       pointer-events: none;
       z-index: 1;
     }
 
-    /* Shockwave circle effect */
-    .shockwave {
+    /* Cinematic Floating Dust / Vignette */
+    .vignette-overlay {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 50%, transparent 50%, rgba(5, 7, 12, 0.7) 100%);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    /* Expanding Bass Shockwaves */
+    .shockwave-1 {
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 400px;
-      height: 400px;
-      margin-top: -200px;
-      margin-left: -200px;
+      width: 440px;
+      height: 440px;
+      margin-top: -220px;
+      margin-left: -220px;
       border-radius: 50%;
       border: 3px solid var(--cyan);
-      box-shadow: 0 0 60px var(--cyan-glow), inset 0 0 40px var(--cyan-glow);
+      box-shadow: 0 0 80px var(--cyan-glow), inset 0 0 50px var(--cyan-glow);
       opacity: 0;
       pointer-events: none;
-      z-index: 2;
+      z-index: 3;
+    }
+    .shockwave-2 {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 500px;
+      height: 500px;
+      margin-top: -250px;
+      margin-left: -250px;
+      border-radius: 50%;
+      border: 2px solid var(--purple);
+      box-shadow: 0 0 60px rgba(192, 132, 252, 0.4);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 3;
     }
 
     /* Shared Clip Styling */
@@ -89,6 +116,7 @@
       align-items: center;
       justify-content: center;
       z-index: 5;
+      transform-style: preserve-3d;
     }
 
     /* SCENE 1: The Hijacking */
@@ -99,6 +127,7 @@
       text-align: center;
       max-width: 1600px;
       width: 100%;
+      transform-style: preserve-3d;
     }
 
     .alert-badge {
@@ -113,42 +142,43 @@
       font-family: var(--font-mono);
       font-size: 20px;
       font-weight: 700;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
-      margin-bottom: 24px;
-      box-shadow: 0 0 24px var(--red-glow);
+      margin-bottom: 22px;
+      box-shadow: 0 0 30px var(--red-glow);
     }
 
     .scene-1-title {
-      font-size: 78px;
+      font-size: 82px;
       font-weight: 900;
       letter-spacing: -0.04em;
-      line-height: 1.08;
+      line-height: 1.06;
       color: var(--white);
-      margin-bottom: 36px;
+      margin-bottom: 34px;
     }
     .scene-1-title span.text-highlight {
       background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      text-shadow: 0 0 30px rgba(239, 68, 68, 0.3);
+      text-shadow: 0 0 40px rgba(239, 68, 68, 0.4);
     }
 
-    /* Visual Simulation Window: Hijacked IDE */
+    /* Visual Simulation Window: Hijacked IDE with 3D Depth */
     .ide-sim-box {
       position: relative;
-      width: 1100px;
-      height: 380px;
+      width: 1140px;
+      height: 390px;
       background: #0d1117;
-      border: 2px solid rgba(239, 68, 68, 0.6);
-      border-radius: 18px;
-      box-shadow: 0 24px 60px rgba(0,0,0,0.7), 0 0 40px var(--red-glow);
+      border: 2px solid rgba(239, 68, 68, 0.65);
+      border-radius: 20px;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), 0 0 50px var(--red-glow);
       overflow: hidden;
       text-align: left;
+      transform-style: preserve-3d;
     }
 
     .ide-sim-bar {
-      height: 48px;
+      height: 50px;
       background: #161b22;
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
       display: flex;
@@ -156,35 +186,35 @@
       padding: 0 20px;
       gap: 12px;
     }
-    .sim-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .sim-dot { width: 13px; height: 13px; border-radius: 50%; }
     .sim-red { background: #ff5f56; }
     .sim-yel { background: #ffbd2e; }
     .sim-grn { background: #27c93f; }
     .sim-bar-title {
       font-family: var(--font-mono);
-      font-size: 16px;
+      font-size: 17px;
       color: #8b949e;
       margin-left: 8px;
     }
 
     .ide-sim-content {
-      padding: 30px 40px;
+      padding: 32px 42px;
       font-family: var(--font-mono);
-      font-size: 24px;
+      font-size: 25px;
       line-height: 1.7;
       color: #c9d1d9;
     }
 
-    /* The Jerking Mouse Cursor */
+    /* The Violent Jerking Cursor */
     .bad-mouse {
       position: absolute;
-      top: 60px;
-      left: 120px;
-      width: 32px;
-      height: 32px;
+      top: 55px;
+      left: 100px;
+      width: 36px;
+      height: 36px;
       pointer-events: none;
-      filter: drop-shadow(0 0 12px var(--red));
-      z-index: 20;
+      filter: drop-shadow(0 0 16px #ef4444);
+      z-index: 25;
     }
 
     /* Slashing Warning Banner */
@@ -195,13 +225,13 @@
       transform: translateX(-50%);
       background: #dc2626;
       color: #ffffff;
-      padding: 14px 44px;
-      border-radius: 12px;
+      padding: 16px 48px;
+      border-radius: 14px;
       font-family: var(--font-mono);
-      font-size: 28px;
+      font-size: 30px;
       font-weight: 800;
       letter-spacing: 0.04em;
-      box-shadow: 0 10px 30px rgba(220, 38, 38, 0.6);
+      box-shadow: 0 12px 36px rgba(220, 38, 38, 0.7);
       display: flex;
       align-items: center;
       gap: 16px;
@@ -210,81 +240,86 @@
 
     .scene-1-punch {
       margin-top: 32px;
-      font-size: 32px;
+      font-size: 34px;
       font-weight: 600;
       color: #fca5a5;
       font-style: italic;
+      text-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
     }
 
-    /* SCENE 2: The Ghost Reveal & HUD Telemetry */
+    /* SCENE 2: The Ghost Reveal & Cyber HUD Telemetry */
     .scene-2-container {
       display: flex;
       flex-direction: column;
       align-items: center;
       text-align: center;
-      max-width: 1700px;
+      max-width: 1720px;
       width: 100%;
+      transform-style: preserve-3d;
     }
 
     .brand-hero-row {
       display: flex;
       align-items: center;
-      gap: 28px;
-      margin-bottom: 18px;
+      gap: 30px;
+      margin-bottom: 16px;
     }
 
     .ghost-avatar {
-      width: 96px;
-      height: 96px;
-      background: linear-gradient(135deg, rgba(0, 242, 254, 0.2), rgba(168, 85, 247, 0.2));
+      width: 106px;
+      height: 106px;
+      background: linear-gradient(135deg, rgba(0, 242, 254, 0.25), rgba(192, 132, 252, 0.2));
       border: 2px solid var(--cyan);
-      border-radius: 26px;
+      border-radius: 28px;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 0 40px var(--cyan-glow), inset 0 0 20px var(--cyan-glow);
+      box-shadow: 0 0 50px var(--cyan-glow), inset 0 0 24px var(--cyan-glow);
     }
 
     .ghost-hero-title {
-      font-size: 96px;
+      font-size: 104px;
       font-weight: 900;
       letter-spacing: -0.04em;
-      background: linear-gradient(135deg, #ffffff 30%, #67e8f9 100%);
+      background: linear-gradient(135deg, #ffffff 25%, #67e8f9 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      text-shadow: 0 0 40px rgba(0, 242, 254, 0.25);
+      text-shadow: 0 0 50px rgba(0, 242, 254, 0.35);
     }
 
     .ghost-hero-tagline {
-      font-size: 38px;
+      font-size: 40px;
       font-weight: 600;
-      color: #cbd5e1;
+      color: #e2e8f0;
       margin-bottom: 50px;
       letter-spacing: -0.02em;
     }
     .ghost-hero-tagline span {
       color: var(--cyan);
-      font-weight: 700;
+      font-weight: 800;
+      text-shadow: 0 0 24px var(--cyan-glow);
     }
 
-    /* 4 High-Tech Glass HUD Cards */
+    /* 4 High-Tech Glass HUD Cards with 3D Depth */
     .hud-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 28px;
+      gap: 30px;
       width: 100%;
-      max-width: 1600px;
+      max-width: 1640px;
+      perspective: 1000px;
     }
 
     .hud-card {
-      background: rgba(15, 23, 42, 0.85);
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      border-radius: 20px;
-      padding: 36px 30px;
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 22px;
+      padding: 38px 32px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
       text-align: left;
       position: relative;
       overflow: hidden;
+      transform-style: preserve-3d;
     }
     .hud-card::before {
       content: '';
@@ -296,7 +331,7 @@
 
     .hud-num {
       font-family: var(--font-sans);
-      font-size: 64px;
+      font-size: 68px;
       font-weight: 900;
       color: var(--white);
       letter-spacing: -0.04em;
@@ -304,14 +339,14 @@
       margin-bottom: 12px;
       font-variant-numeric: tabular-nums;
     }
-    .hud-num.accent-green { color: var(--emerald); text-shadow: 0 0 24px var(--emerald-glow); }
-    .hud-num.accent-cyan { color: var(--cyan); text-shadow: 0 0 24px var(--cyan-glow); }
+    .hud-num.accent-green { color: var(--emerald); text-shadow: 0 0 28px var(--emerald-glow); }
+    .hud-num.accent-cyan { color: var(--cyan); text-shadow: 0 0 28px var(--cyan-glow); }
 
     .hud-label {
-      font-size: 28px;
+      font-size: 30px;
       font-weight: 700;
       color: var(--white);
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
 
     .hud-status {
@@ -319,22 +354,23 @@
       align-items: center;
       gap: 8px;
       font-family: var(--font-mono);
-      font-size: 18px;
+      font-size: 19px;
       font-weight: 700;
       color: var(--emerald);
       background: rgba(16, 185, 129, 0.12);
-      border: 1px solid rgba(16, 185, 129, 0.3);
-      padding: 4px 12px;
-      border-radius: 6px;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      padding: 5px 14px;
+      border-radius: 8px;
     }
 
-    /* SCENE 3: Dual-Engine Split Screen (Foreground Editor vs Background Agent) */
+    /* SCENE 3: Dual-Engine Reality (Foreground Editor vs Background Agent) */
     .scene-3-container {
       display: flex;
       flex-direction: column;
       align-items: center;
       width: 100%;
-      max-width: 1720px;
+      max-width: 1740px;
+      transform-style: preserve-3d;
     }
 
     .split-wrapper {
@@ -342,41 +378,43 @@
       grid-template-columns: 1fr 1fr;
       gap: 36px;
       width: 100%;
+      perspective: 1200px;
     }
 
     .split-col {
       background: #0d1117;
-      border-radius: 20px;
+      border-radius: 22px;
       overflow: hidden;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7);
       text-align: left;
       height: 600px;
       display: flex;
       flex-direction: column;
+      transform-style: preserve-3d;
     }
 
     .col-left {
-      border: 2px solid rgba(16, 185, 129, 0.4);
-      box-shadow: 0 0 36px rgba(16, 185, 129, 0.15);
+      border: 2px solid rgba(16, 185, 129, 0.5);
+      box-shadow: 0 0 44px rgba(16, 185, 129, 0.2);
     }
     .col-right {
-      border: 2px solid rgba(0, 242, 254, 0.4);
-      box-shadow: 0 0 36px rgba(0, 242, 254, 0.15);
+      border: 2px solid rgba(0, 242, 254, 0.5);
+      box-shadow: 0 0 44px rgba(0, 242, 254, 0.2);
     }
 
     .split-titlebar {
-      height: 52px;
+      height: 54px;
       background: #161b22;
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 20px;
+      padding: 0 22px;
     }
 
     .badge-focus {
       font-family: var(--font-mono);
-      font-size: 16px;
+      font-size: 17px;
       font-weight: 700;
       color: var(--emerald);
       display: flex;
@@ -385,7 +423,7 @@
     }
     .badge-ghost {
       font-family: var(--font-mono);
-      font-size: 16px;
+      font-size: 17px;
       font-weight: 700;
       color: var(--cyan);
       display: flex;
@@ -394,29 +432,29 @@
     }
 
     .split-body {
-      padding: 28px 32px;
+      padding: 30px 34px;
       font-family: var(--font-mono);
-      font-size: 21px;
-      line-height: 1.65;
+      font-size: 22px;
+      line-height: 1.68;
       color: #c9d1d9;
       flex: 1;
     }
 
     .split-callout {
       margin-top: 36px;
-      background: rgba(0, 242, 254, 0.08);
-      border: 1px solid rgba(0, 242, 254, 0.3);
+      background: rgba(0, 242, 254, 0.1);
+      border: 1px solid rgba(0, 242, 254, 0.4);
       border-radius: 9999px;
-      padding: 12px 36px;
+      padding: 14px 44px;
       font-family: var(--font-mono);
-      font-size: 28px;
+      font-size: 30px;
       font-weight: 800;
       color: var(--cyan);
       letter-spacing: 0.04em;
-      box-shadow: 0 0 30px var(--cyan-glow);
+      box-shadow: 0 0 36px var(--cyan-glow);
     }
 
-    /* SCENE 4: Outro */
+    /* SCENE 4: Outro & Call to Action */
     .scene-4-container {
       display: flex;
       flex-direction: column;
@@ -424,10 +462,11 @@
       text-align: center;
       max-width: 1600px;
       width: 100%;
+      transform-style: preserve-3d;
     }
 
     .outro-h1 {
-      font-size: 88px;
+      font-size: 92px;
       font-weight: 900;
       letter-spacing: -0.04em;
       line-height: 1.05;
@@ -438,13 +477,14 @@
       background: linear-gradient(135deg, #00f2fe 0%, #38bdf8 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 40px rgba(0, 242, 254, 0.35);
     }
 
     .outro-sub {
-      font-size: 36px;
-      color: var(--gray-dim);
+      font-size: 38px;
+      color: #cbd5e1;
       font-weight: 500;
-      margin-bottom: 44px;
+      margin-bottom: 46px;
     }
 
     .outro-pills {
@@ -454,50 +494,53 @@
     }
 
     .agent-pill {
-      background: rgba(15, 23, 42, 0.85);
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.16);
       border-radius: 9999px;
-      padding: 14px 34px;
-      font-size: 28px;
+      padding: 16px 36px;
+      font-size: 29px;
       font-weight: 700;
       color: var(--white);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5);
     }
     .agent-pill.hero-pill {
-      background: rgba(0, 242, 254, 0.14);
+      background: rgba(0, 242, 254, 0.16);
       border-color: var(--cyan);
       color: var(--cyan);
-      box-shadow: 0 0 24px var(--cyan-glow);
+      box-shadow: 0 0 30px var(--cyan-glow);
     }
 
     .outro-terminal-cta {
       background: #0d1117;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 20px;
-      padding: 24px 56px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 22px;
+      padding: 26px 60px;
       font-family: var(--font-mono);
-      font-size: 32px;
+      font-size: 34px;
       font-weight: 800;
       color: var(--white);
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 242, 254, 0.15);
       display: inline-flex;
       align-items: center;
-      gap: 20px;
+      gap: 22px;
     }
     .outro-terminal-cta span.git-green {
       color: var(--emerald);
+      text-shadow: 0 0 20px var(--emerald-glow);
     }
   </style>
 </head>
 <body>
   <div id="root" data-composition-id="main" data-width="1920" data-height="1080">
-    <!-- Ambient cyber background -->
+    <!-- Ambient cyber background with flares -->
     <div class="cyber-bg"></div>
+    <div class="vignette-overlay"></div>
 
-    <!-- Shockwave element for the drop -->
-    <div id="fx-shockwave" class="shockwave"></div>
+    <!-- Dual Shockwave elements for the bass drop -->
+    <div id="fx-shockwave-1" class="shockwave-1"></div>
+    <div id="fx-shockwave-2" class="shockwave-2"></div>
 
-    <!-- Sound Track -->
+    <!-- Sound Track (High energy funky house + 6 timed SFX) -->
     <audio
       id="bgm"
       src="assets/music/music.mp3"
@@ -508,7 +551,7 @@
 
     <!-- SCENE 1: The Hijacking (0.0s – 3.8s) -->
     <section id="scene-1" class="clip" data-start="0" data-duration="3.8" data-track-index="1">
-      <div class="scene-1-container">
+      <div id="s1-stage" class="scene-1-container">
         <div id="s1-badge" class="alert-badge" data-layout-ignore="true">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
           TRADITIONAL CUA FLAW
@@ -532,14 +575,14 @@
             <div>}</div>
           </div>
 
-          <!-- Violent Jerking Cursor -->
+          <!-- Violent Jerking Cursor with Glow -->
           <svg id="bad-cursor" class="bad-mouse" viewBox="0 0 24 24" fill="#ef4444" stroke="#ffffff" stroke-width="2">
             <path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/>
           </svg>
 
           <!-- Slashing Hijack Banner -->
           <div id="s1-hijack-banner" class="hijack-banner">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
             MOUSE TAKEN OVER · DESKTOP FROZEN
           </div>
         </div>
@@ -550,12 +593,12 @@
       </div>
     </section>
 
-    <!-- SCENE 2: The Ghost Reveal & HUD Telemetry (3.8s – 8.0s) -->
+    <!-- SCENE 2: The Ghost Reveal & Cyber HUD Telemetry (3.8s – 8.0s) -->
     <section id="scene-2" class="clip" data-start="3.8" data-duration="4.2" data-track-index="2">
-      <div class="scene-2-container">
+      <div id="s2-stage" class="scene-2-container">
         <div id="s2-hero" class="brand-hero-row">
           <div class="ghost-avatar">
-            <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#00f2fe" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="62" height="62" viewBox="0 0 24 24" fill="none" stroke="#00f2fe" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M9 10h.01"/><path d="M15 10h.01"/>
               <path d="M12 2a8 8 0 0 0-8 8v12l3-3 2.5 2.5L12 19l2.5 2.5L17 19l3 3V10a8 8 0 0 0-8-8z"/>
             </svg>
@@ -586,7 +629,7 @@
           <div id="hc-4" class="hud-card">
             <div class="hud-num accent-cyan">~500</div>
             <div class="hud-label">Lines Python</div>
-            <div class="hud-status" data-layout-ignore="true" style="color: var(--cyan); border-color: rgba(0,242,254,0.3); background: rgba(0,242,254,0.12);">
+            <div class="hud-status" data-layout-ignore="true" style="color: var(--cyan); border-color: rgba(0,242,254,0.35); background: rgba(0,242,254,0.12);">
               ⚡ ZERO BLOAT
             </div>
           </div>
@@ -596,7 +639,7 @@
 
     <!-- SCENE 3: Dual-Engine Reality (8.0s – 12.6s) -->
     <section id="scene-3" class="clip" data-start="8.0" data-duration="4.6" data-track-index="3">
-      <div class="scene-3-container" data-hold="dual engine comparison">
+      <div id="s3-stage" class="scene-3-container" data-hold="dual engine comparison">
         <div class="split-wrapper">
           <!-- Left Window: You in Flow -->
           <div id="s3-left" class="split-col col-left">
@@ -607,7 +650,7 @@
                 <div class="sim-dot sim-grn"></div>
               </div>
               <div class="badge-focus" data-layout-ignore="true">
-                <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--emerald);"></span>
+                <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--emerald); box-shadow:0 0 10px var(--emerald);"></span>
                 FOREGROUND: VS CODE (YOUR FLOW)
               </div>
             </div>
@@ -661,7 +704,7 @@
 
     <!-- SCENE 4: Outro & Call to Action (12.6s – 18.0s) -->
     <section id="scene-4" class="clip" data-start="12.6" data-duration="5.4" data-track-index="4">
-      <div class="scene-4-container">
+      <div id="s4-stage" class="scene-4-container">
         <h1 id="s4-title" class="outro-h1">
           Keep coding. <span>Let AI work in the dark.</span>
         </h1>
@@ -677,7 +720,7 @@
         </div>
 
         <div id="s4-box" class="outro-terminal-cta">
-          <svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
           </svg>
           github.com/vaibhav-space/ghost-cua · <span class="git-green">100% Open Source</span>
@@ -690,58 +733,83 @@
     window.__timelines = window.__timelines || {};
     const tl = gsap.timeline({ paused: true });
 
-    // SCENE 1: The Hijacking (0.0s – 3.8s) - Frame 0 has full visibility!
-    // No opacity:0 at t=0 so frame 0 is a rich, non-empty screenshot
-    tl.from("#s1-ide", { y: 20, duration: 0.4, ease: "power2.out" }, 0.0);
+    // SCENE 1: The Hijacking (0.0s – 3.8s) - 3D Perspective + Violent Camera Punch
+    // Frame 0 has full visibility with subtle 3D tilt
+    gsap.set("#s1-stage", { rotationX: 4, rotationY: -3, scale: 1.0 });
 
-    // Mouse jerking animation (timed to glitch audio at 0.8s)
-    tl.to("#bad-cursor", { x: 380, y: 120, duration: 0.4, ease: "power1.inOut" }, 0.8);
-    tl.to("#s1-ide", { x: -8, y: 5, duration: 0.08, repeat: 5, yoyo: true }, 0.9);
-    tl.to("#bad-cursor", { x: 740, y: 60, duration: 0.35, ease: "power2.inOut" }, 1.3);
+    // At 0.8s: Sudden violent glitch hit! Camera punches in and tilts
+    tl.to("#bad-cursor", { x: 380, y: 120, duration: 0.35, ease: "power2.inOut" }, 0.8);
+    tl.to("#s1-ide", { 
+      x: -12, 
+      y: 8, 
+      rotationZ: 2, 
+      duration: 0.05, 
+      repeat: 7, 
+      yoyo: true, 
+      ease: "rough({strength: 2, points: 10})" 
+    }, 0.85);
+    tl.to("#s1-stage", { scale: 1.06, rotationZ: -1.5, duration: 0.35, ease: "power2.out" }, 0.85);
+    tl.to("#bad-cursor", { x: 740, y: 60, duration: 0.3, ease: "power3.inOut" }, 1.25);
 
-    // Slashing warning banner (timed to error audio at 2.0s)
+    // Punchline appears
     tl.from("#s1-punch", { y: 15, opacity: 0, duration: 0.3, ease: "power2.out" }, 0.5);
-    tl.from("#s1-hijack-banner", { scale: 0.8, opacity: 0, duration: 0.35, ease: "back.out(2.0)" }, 2.0);
 
-    // Scene 1 Exit
-    tl.to(["#s1-badge", "#s1-title", "#s1-ide", "#s1-punch"], { opacity: 0, duration: 0.2, ease: "power2.in" }, 3.6);
+    // Slashing warning banner slams down
+    tl.from("#s1-hijack-banner", { scale: 0.7, opacity: 0, duration: 0.35, ease: "back.out(2.2)" }, 2.0);
 
-    // SCENE 2: The Ghost Reveal (3.8s – 8.0s) - BASS DROP & WHOOSH AT 4.0s
-    tl.fromTo("#fx-shockwave", { scale: 0.2, opacity: 1 }, { scale: 3.2, opacity: 0, duration: 0.9, ease: "power2.out" }, 3.8);
-    tl.from("#s2-hero", { scale: 0.75, y: 35, opacity: 0, duration: 0.45, ease: "back.out(1.8)" }, 3.8);
-    tl.from("#s2-tag", { y: 20, opacity: 0, duration: 0.4, ease: "power3.out" }, 4.1);
+    // Scene 1 Exit: Fast explosive zoom
+    tl.to("#s1-stage", { scale: 1.15, opacity: 0, duration: 0.2, ease: "power2.in" }, 3.6);
 
-    // HUD Cards Pop with Stagger
-    tl.from("#hc-1", { y: 35, opacity: 0, duration: 0.3, ease: "back.out(1.5)" }, 4.5);
-    tl.from("#hc-2", { y: 35, opacity: 0, duration: 0.3, ease: "back.out(1.5)" }, 4.7);
-    tl.from("#hc-3", { y: 35, opacity: 0, duration: 0.3, ease: "back.out(1.5)" }, 4.9);
-    tl.from("#hc-4", { y: 35, opacity: 0, duration: 0.3, ease: "back.out(1.5)" }, 5.1);
+    // SCENE 2: The Ghost Reveal (3.8s – 8.0s) - BASS DROP SHOCKWAVES & 3D HUD TILT
+    // Dual Expanding Shockwaves on the exact beat
+    tl.fromTo("#fx-shockwave-1", 
+      { scale: 0.2, opacity: 1 }, 
+      { scale: 3.5, opacity: 0, duration: 0.9, ease: "power3.out" }, 
+      3.8
+    );
+    tl.fromTo("#fx-shockwave-2", 
+      { scale: 0.1, opacity: 0.8 }, 
+      { scale: 4.2, opacity: 0, duration: 1.1, ease: "power2.out" }, 
+      3.9
+    );
 
-    // Scene 2 Exit
-    tl.to(["#s2-hero", "#s2-tag", "#hc-1", "#hc-2", "#hc-3", "#hc-4"], { opacity: 0, duration: 0.2, ease: "power2.in" }, 7.8);
+    // Camera pulls back smoothly as the Ghost avatar slams in with 3D spring
+    tl.from("#s2-stage", { scale: 1.2, rotationX: -10, duration: 0.6, ease: "power3.out" }, 3.8);
+    tl.from("#s2-hero", { scale: 0.7, y: 40, opacity: 0, duration: 0.45, ease: "back.out(2.0)" }, 3.8);
+    tl.from("#s2-tag", { y: 22, opacity: 0, duration: 0.4, ease: "power3.out" }, 4.1);
 
-    // SCENE 3: Dual Engine Split (8.0s – 12.6s) - TYPING SFX AT 8.8s
-    tl.from("#s3-left", { x: -60, opacity: 0, duration: 0.45, ease: "power3.out" }, 8.0);
-    tl.from("#s3-right", { x: 60, opacity: 0, duration: 0.45, ease: "power3.out" }, 8.0);
-    tl.from("#s3-pill", { scale: 0.9, opacity: 0, duration: 0.35, ease: "back.out(1.4)" }, 8.3);
+    // 4 HUD Cards cascade with 3D perspective tilt
+    tl.from("#hc-1", { y: 50, rotationX: 18, opacity: 0, duration: 0.35, ease: "back.out(1.6)" }, 4.45);
+    tl.from("#hc-2", { y: 50, rotationX: 18, opacity: 0, duration: 0.35, ease: "back.out(1.6)" }, 4.65);
+    tl.from("#hc-3", { y: 50, rotationX: 18, opacity: 0, duration: 0.35, ease: "back.out(1.6)" }, 4.85);
+    tl.from("#hc-4", { y: 50, rotationX: 18, opacity: 0, duration: 0.35, ease: "back.out(1.6)" }, 5.05);
 
-    // Terminal step progression
-    tl.from("#s3-step1", { x: -20, opacity: 0, duration: 0.3, ease: "power2.out" }, 8.9);
-    tl.from("#s3-step2", { x: -20, opacity: 0, duration: 0.3, ease: "power2.out" }, 9.7);
-    tl.from("#s3-step3", { x: -20, opacity: 0, duration: 0.3, ease: "power2.out" }, 10.5);
-    tl.from("#s3-result", { y: 15, opacity: 0, duration: 0.35, ease: "power2.out" }, 11.2);
+    // Scene 2 Exit: Quick perspective tilt out
+    tl.to("#s2-stage", { scale: 0.92, opacity: 0, duration: 0.2, ease: "power2.in" }, 7.8);
+
+    // SCENE 3: Dual-Engine Reality (8.0s – 12.6s) - 3D MULTI-MONITOR WORKSTATION
+    tl.from("#s3-stage", { scale: 1.1, duration: 0.5, ease: "power2.out" }, 8.0);
+    tl.from("#s3-left", { x: -80, rotationY: 8, opacity: 0, duration: 0.45, ease: "power3.out" }, 8.0);
+    tl.from("#s3-right", { x: 80, rotationY: -8, opacity: 0, duration: 0.45, ease: "power3.out" }, 8.0);
+    tl.from("#s3-pill", { scale: 0.88, opacity: 0, duration: 0.35, ease: "back.out(1.5)" }, 8.35);
+
+    // High-speed terminal step progression (timed to mechanical typing clicks at 8.9s)
+    tl.from("#s3-step1", { x: -24, opacity: 0, duration: 0.28, ease: "power2.out" }, 8.9);
+    tl.from("#s3-step2", { x: -24, opacity: 0, duration: 0.28, ease: "power2.out" }, 9.7);
+    tl.from("#s3-step3", { x: -24, opacity: 0, duration: 0.28, ease: "power2.out" }, 10.5);
+    tl.from("#s3-result", { y: 16, opacity: 0, duration: 0.35, ease: "power2.out" }, 11.2);
 
     // Scene 3 Exit
-    tl.to(["#s3-left", "#s3-right", "#s3-pill"], { opacity: 0, duration: 0.2, ease: "power2.in" }, 12.4);
+    tl.to("#s3-stage", { scale: 0.92, opacity: 0, duration: 0.2, ease: "power2.in" }, 12.4);
 
     // SCENE 4: Outro & Call to Action (12.6s – 18.0s) - VICTORY CHIME AT 14.0s
-    // Enters fast at 12.6s - 13.5s and holds firmly until the end (18.0s)!
-    tl.from("#s4-title", { y: 30, opacity: 0, duration: 0.45, ease: "power3.out" }, 12.6);
-    tl.from("#s4-sub", { y: 20, opacity: 0, duration: 0.4, ease: "power3.out" }, 12.9);
-    tl.from("#s4-pills", { y: 20, opacity: 0, duration: 0.4, ease: "power3.out" }, 13.2);
-    tl.from("#s4-box", { scale: 0.92, opacity: 0, duration: 0.45, ease: "back.out(1.6)" }, 13.5);
+    tl.from("#s4-stage", { scale: 0.95, duration: 0.5, ease: "power2.out" }, 12.6);
+    tl.from("#s4-title", { y: 35, opacity: 0, duration: 0.45, ease: "power3.out" }, 12.6);
+    tl.from("#s4-sub", { y: 22, opacity: 0, duration: 0.4, ease: "power3.out" }, 12.9);
+    tl.from("#s4-pills", { y: 22, opacity: 0, duration: 0.4, ease: "power3.out" }, 13.2);
+    tl.from("#s4-box", { scale: 0.9, opacity: 0, duration: 0.45, ease: "back.out(1.8)" }, 13.5);
 
-    // Explicit hold until full 18.0s duration
+    // Settle and hold until full 18.0s duration
     tl.to({}, { duration: 0.01 }, 18.0);
 
     window.__timelines["main"] = tl;
