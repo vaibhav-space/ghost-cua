@@ -307,7 +307,14 @@ def count_copy_response_buttons(ax_app: Any) -> int:
         return 0
 
 
-def submit_request_background(ax_app: Any, timeout: float = 15.0) -> None:
+def is_stop_button(n: Node) -> bool:
+    if n.role != "AXButton":
+        return False
+    txt = str(n.desc or n.label or "").strip().lower()
+    return len(txt) <= 25 and ("stop" in txt)
+
+
+def submit_request_background(ax_app: Any, timeout: float = 35.0) -> None:
     """
     Submits the prompt in the background and verifies that submission actually succeeded
     by polling for the AXTextArea to clear or the Stop button to appear.
@@ -320,7 +327,7 @@ def submit_request_background(ax_app: Any, timeout: float = 15.0) -> None:
         nodes = walk_tree_dfs(main_win)
         
         # Check if already submitted (Stop button present or text area empty)
-        stop_btns = [n for n in nodes if n.role == "AXButton" and "stop" in str(n.desc or "").lower()]
+        stop_btns = [n for n in nodes if is_stop_button(n)]
         text_areas = [n for n in nodes if n.role == "AXTextArea"]
         
         if stop_btns:
@@ -344,8 +351,9 @@ def submit_request_background(ax_app: Any, timeout: float = 15.0) -> None:
             main_win = get_gemini_main_window(ax_app)
             nodes = walk_tree_dfs(main_win)
             text_areas = [n for n in nodes if n.role == "AXTextArea"]
-            if text_areas and not str(text_areas[0].val or "").strip():
-                logger.info("Submission confirmed: Composer text cleared.")
+            stop_btns = [n for n in nodes if is_stop_button(n)]
+            if stop_btns or (text_areas and not str(text_areas[0].val or "").strip()):
+                logger.info("Submission confirmed: Generation started or composer text cleared.")
                 return
                 
         time.sleep(0.5)
@@ -354,39 +362,53 @@ def submit_request_background(ax_app: Any, timeout: float = 15.0) -> None:
 
 
 def wait_for_generation_complete(
-    ax_app: Any, initial_copy_count: int, timeout: float = 180.0
+    ax_app: Any, initial_copy_count: int, timeout: float = 240.0
 ) -> None:
     logger.info("Monitoring generation state in background...")
     start = time.time()
+    saw_stop = False
 
     while time.time() - start < timeout:
         main_win = get_gemini_main_window(ax_app)
         nodes = walk_tree_dfs(main_win)
 
-        stop_btns = [
-            n for n in nodes if n.role == "AXButton" and "Stop" in str(n.desc or n.label or "")
-        ]
+        stop_btns = [n for n in nodes if is_stop_button(n)]
         copy_btns = [
             n for n in nodes if n.role == "AXButton" and n.desc == "Copy response"
         ]
 
-        # Generation completes when a new Copy response button is present and Stop button is gone
+        if stop_btns:
+            saw_stop = True
+
+        # Generation completes when copy button count increased OR when stop button disappeared after being seen
         if len(copy_btns) > initial_copy_count and not stop_btns:
-            logger.info(
-                "Generation complete (new Copy response button detected, count: %d -> %d).",
-                initial_copy_count,
-                len(copy_btns),
-            )
-            time.sleep(0.5)
+            logger.info("Generation complete (new copy button detected).")
+            time.sleep(0.8)
             return
 
-        time.sleep(0.8)
+        if saw_stop and not stop_btns:
+            logger.info("Generation complete (stop button disappeared).")
+            time.sleep(0.8)
+            return
+
+        # Fallback: if at least 15s elapsed and there is no stop button, but submit button is present and response candidate text exists
+        if (time.time() - start) > 15.0 and not stop_btns:
+            submit_btns = [n for n in nodes if n.role == "AXButton" and "submit" in str(n.desc or n.label or "").lower()]
+            text_candidates = [
+                n for n in nodes if len(str(n.desc or n.val or "")) > 200
+            ]
+            if submit_btns and text_candidates:
+                logger.info("Generation complete (submit button ready and response text detected).")
+                time.sleep(0.8)
+                return
+
+        time.sleep(1.0)
 
     raise BackgroundAutomationError(f"Generation timed out after {timeout}s.")
 
 
 def extract_response(ax_app: Any) -> str:
-    """Extract complete response text using Copy response button with clipboard preservation."""
+    """Extract complete response text using Copy response button or direct node extraction with clipboard preservation."""
     logger.info("Extracting response via Copy response button...")
     pb = NSPasteboard.generalPasteboard()
 
@@ -409,35 +431,40 @@ def extract_response(ax_app: Any) -> str:
             n for n in nodes if n.role == "AXButton" and n.desc == "Copy response"
         ]
 
-        if not copy_btns:
-            raise BackgroundAutomationError("No 'Copy response' button found in accessibility tree.")
+        if copy_btns:
+            # Always take the last Copy response button (latest turn)
+            last_copy_btn = copy_btns[-1]
+            pb.clearContents()
+            err = AXUIElementPerformAction(last_copy_btn.ref, "AXPress")
+            if err == kAXErrorSuccess:
+                for _ in range(25):
+                    time.sleep(0.1)
+                    copied = pb.stringForType_(NSStringPboardType)
+                    if copied and copied.strip():
+                        return copied.strip()
 
-        # Always take the last Copy response button (latest turn)
-        last_copy_btn = copy_btns[-1]
+        # Fallback: In Gemini desktop, the generated response is exposed on text nodes or button desc
+        candidates = []
+        for n in nodes:
+            txt = str(n.desc or n.val or "").strip()
+            if len(txt) > 120 and not txt.startswith("http") and ("#" in txt or "\n" in txt or len(txt.split()) > 20):
+                candidates.append(txt)
 
-        # Clear pasteboard before copy
-        pb.clearContents()
+        if candidates:
+            # Return the latest candidate
+            return candidates[-1]
 
-        err = AXUIElementPerformAction(last_copy_btn.ref, "AXPress")
-        if err != kAXErrorSuccess:
-            raise BackgroundAutomationError(f"AXPress on 'Copy response' failed with code {err}.")
-
-        # Read copied string with short polling
-        response_text = ""
-        for _ in range(25):
-            time.sleep(0.1)
-            copied = pb.stringForType_(NSStringPboardType)
-            if copied and copied.strip():
-                response_text = copied.strip()
-                break
-
-        if not response_text:
-            raise BackgroundAutomationError("Clipboard was empty after pressing 'Copy response'.")
-
-        return response_text
+        raise BackgroundAutomationError("Could not extract response from accessibility tree.")
 
     finally:
         # 2. Restore user clipboard if backup was taken
+        if old_data:
+            pb.clearContents()
+            for t, data in old_data.items():
+                try:
+                    pb.setData_forType_(data, t)
+                except Exception:
+                    pass
         if old_data:
             pb.clearContents()
             for t, data in old_data.items():
