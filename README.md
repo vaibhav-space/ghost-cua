@@ -11,6 +11,14 @@
 
 🌐 **[Explore the Interactive Landing Page & Live Simulator →](https://vaibhav-space.github.io/ghost-cua/)**
 
+<p align="center">
+  <a href="brag-output/brag.mp4">
+    <img src="brag-output/brag.jpg" alt="GhostCUA Launch Demo" width="800" style="border-radius: 12px; box-shadow: 0 12px 32px rgba(0,0,0,0.12);" />
+  </a>
+  <br />
+  <em>🎬 <a href="brag-output/brag.mp4">Watch the 18-second launch video demo</a></em>
+</p>
+
 ---
 
 ## The Problem with Modern "Computer Use Agents"

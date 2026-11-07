@@ -17,6 +17,12 @@ __pycache__/
 !requirements.txt
 *.log
 
+# Allow official launch assets & demo clips
+!brag-output/brag.mp4
+!brag-output/brag.jpg
+!brag-output/share-copy.txt
+!brag-output/composition/assets/*
+
 # macOS metadata
 .DS_Store
 
@@ -24,4 +30,6 @@ __pycache__/
 .gemini/
 .claude/
 .cursor/
+.hyperframes/
+.agents/
 

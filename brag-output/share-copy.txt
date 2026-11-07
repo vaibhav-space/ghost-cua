@@ -1,0 +1,6 @@
+If your AI agent freezes your screen and hijacks your mouse, it’s not automation—it’s an interruption.
+
+GhostCUA gives Claude Code, Cursor, and Codex zero-interruption background access to Meta AI (live Instagram search) and Gemini (video QA) via native macOS Darwin IPC. 0 mouse drift, 0 focus theft.
+
+100% open source: https://github.com/vaibhav-space/ghost-cua
+Live demo: https://vaibhav-space.github.io/ghost-cua/

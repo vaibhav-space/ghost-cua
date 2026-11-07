@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920, height=1080">
+  <title>GhostCUA Launch Video</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+
+  <style>
+    :root {
+      --canvas: #f8f9fb;
+      --surface: #ffffff;
+      --ink: #0a0d14;
+      --ink-secondary: #475467;
+      --accent: #2563eb;
+      --accent-emerald: #059669;
+      --accent-rose: #e11d48;
+      
+      --font-display: 'Sora', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      margin: 0;
+      background: #000000;
+      color: var(--ink);
+      font-family: var(--font-display);
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    #root {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+    }
+
+    .clip {
+      position: absolute;
+      inset: 0;
+    }
+
+    /* Common layout helpers */
+    .scene-fill-dark {
+      position: absolute;
+      inset: 0;
+      background: #090a0f;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 80px;
+    }
+
+    .scene-fill-light {
+      position: absolute;
+      inset: 0;
+      background: #f8f9fb;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 80px;
+    }
+
+    /* Scene 1: The Hook */
+    .hook-warning-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(225, 29, 72, 0.12);
+      border: 1px solid rgba(225, 29, 72, 0.3);
+      padding: 10px 24px;
+      border-radius: 9999px;
+      color: #fda4af;
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 32px;
+      letter-spacing: 0.04em;
+    }
+
+    .hook-title {
+      font-size: 78px;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.08;
+      letter-spacing: -0.04em;
+      max-width: 1400px;
+      margin-bottom: 28px;
+    }
+
+    .hook-subtitle {
+      font-size: 38px;
+      color: #94a3b8;
+      font-weight: 500;
+      max-width: 1100px;
+      line-height: 1.4;
+      margin-bottom: 40px;
+    }
+
+    .hook-punchline {
+      font-size: 44px;
+      font-weight: 800;
+      color: #38bdf8;
+      letter-spacing: -0.02em;
+    }
+
+    /* Scene 2: The Telemetry Cards */
+    .brand-header-row {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .brand-logo-box {
+      width: 72px;
+      height: 72px;
+      background: #ffffff;
+      border: 2px solid rgba(15, 23, 42, 0.12);
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    }
+
+    .brand-title {
+      font-size: 64px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--ink);
+    }
+
+    .brand-subhead {
+      font-size: 32px;
+      color: var(--ink-secondary);
+      font-weight: 500;
+      margin-bottom: 50px;
+    }
+
+    .telemetry-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 28px;
+      width: 100%;
+      max-width: 1540px;
+    }
+
+    .tele-card {
+      background: #ffffff;
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      border-radius: 20px;
+      padding: 36px 32px;
+      text-align: left;
+      box-shadow: 0 10px 30px -6px rgba(15, 23, 42, 0.08);
+    }
+
+    .tele-num {
+      font-size: 58px;
+      font-weight: 800;
+      color: var(--ink);
+      letter-spacing: -0.03em;
+      display: block;
+      margin-bottom: 6px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .tele-label {
+      font-size: 28px;
+      color: var(--ink-secondary);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* Scene 3: Claude Code Terminal */
+    .terminal-container {
+      width: 100%;
+      max-width: 1540px;
+      background: #0b0d13;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 20px;
+      box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+      text-align: left;
+    }
+
+    .term-titlebar {
+      height: 56px;
+      background: #161b22;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+    }
+
+    .term-dots {
+      display: flex;
+      gap: 10px;
+    }
+    .tdot { width: 14px; height: 14px; border-radius: 50%; }
+    .td-red { background: #ff5f56; }
+    .td-yel { background: #ffbd2e; }
+    .td-grn { background: #27c93f; }
+
+    .term-bar-title {
+      font-family: var(--font-mono);
+      font-size: 18px;
+      color: #8b949e;
+    }
+
+    .term-body {
+      padding: 36px 44px;
+      font-family: var(--font-mono);
+      font-size: 22px;
+      line-height: 1.65;
+      color: #c9d1d9;
+    }
+
+    .c-prompt { color: #58a6ff; font-weight: 600; }
+    .c-meta { color: #79c0ff; }
+    .c-green { color: #3fb950; font-weight: 600; }
+    .c-box {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin: 18px 0;
+      color: #e6edf3;
+      font-size: 20px;
+    }
+    .c-dim { color: #8b949e; }
+    .c-accent { color: #d2a8ff; font-weight: 600; }
+
+    /* Scene 4: Outro */
+    .outro-h1 {
+      font-size: 84px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: var(--ink);
+      line-height: 1.08;
+      margin-bottom: 24px;
+    }
+
+    .outro-sub {
+      font-size: 34px;
+      color: var(--ink-secondary);
+      margin-bottom: 48px;
+      font-weight: 500;
+    }
+
+    .outro-chip-row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 50px;
+    }
+
+    .outro-chip {
+      background: #ffffff;
+      border: 1px solid rgba(15, 23, 42, 0.1);
+      border-radius: 9999px;
+      padding: 14px 32px;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--ink);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+    }
+
+    .outro-chip.accent {
+      background: #eff6ff;
+      border-color: #bfdbfe;
+      color: #1d4ed8;
+    }
+
+    .outro-repo-box {
+      background: var(--ink);
+      color: #ffffff;
+      border-radius: 18px;
+      padding: 22px 48px;
+      font-family: var(--font-mono);
+      font-size: 28px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 12px 32px rgba(10, 13, 20, 0.25);
+    }
+  </style>
+</head>
+<body>
+
+  <div
+    id="root"
+    data-composition-id="main"
+    data-start="0"
+    data-width="1920"
+    data-height="1080"
+    data-duration="18"
+  >
+    <!-- Background Music -->
+    <audio
+      id="bgm"
+      class="clip"
+      src="assets/music/music.mp3"
+      data-start="0"
+      data-duration="18"
+      data-track-index="0"
+      data-volume="0.7"
+    ></audio>
+
+    <!-- SCENE 1: The Hook (0.0s – 3.8s) -->
+    <section id="scene-1" class="clip" data-start="0" data-duration="3.8" data-track-index="1">
+      <div class="scene-fill-dark">
+        <div id="s1-badge" class="hook-warning-badge" data-layout-ignore="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          TRADITIONAL CUA FLAW
+        </div>
+        <h1 id="s1-title" class="hook-title">Your AI agent is hijacking your mouse.</h1>
+        <p id="s1-sub" class="hook-subtitle">Flashes windows. Steals focus mid-keystroke. Freezes your screen.</p>
+        <div id="s1-punch" class="hook-punchline">"If you can't use your PC, it's not automation."</div>
+      </div>
+    </section>
+
+    <!-- SCENE 2: The Telemetry Reveal (3.8s – 8.2s) -->
+    <section id="scene-2" class="clip" data-start="3.8" data-duration="4.4" data-track-index="2">
+      <div class="scene-fill-light">
+        <div id="s2-header" class="brand-header-row">
+          <div class="brand-logo-box">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 10h.01M15 10h.01M12 2a8 8 0 0 0-8 8v12l3-3 2.5 2.5L12 19l2.5 2.5L17 19l3 3V10a8 8 0 0 0-8-8z"/>
+            </svg>
+          </div>
+          <span class="brand-title">GhostCUA</span>
+        </div>
+        <div id="s2-sub" class="brand-subhead">Zero-Interruption Background macOS Desktop Automation</div>
+
+        <div class="telemetry-row">
+          <div id="tc-1" class="tele-card">
+            <span class="tele-num">0px</span>
+            <span class="tele-label">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Mouse Pointer Drift
+            </span>
+          </div>
+          <div id="tc-2" class="tele-card">
+            <span class="tele-num">0ms</span>
+            <span class="tele-label">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Keyboard Focus Theft
+            </span>
+          </div>
+          <div id="tc-3" class="tele-card">
+            <span class="tele-num">0</span>
+            <span class="tele-label">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Desktop Space Swooshes
+            </span>
+          </div>
+          <div id="tc-4" class="tele-card">
+            <span class="tele-num">~500</span>
+            <span class="tele-label">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5"><circle cx="12" cy="12" r="10"/></svg>
+              Lines of Clean Python
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCENE 3: Claude Code Live Terminal (8.2s – 14.0s) -->
+    <section id="scene-3" class="clip" data-start="8.2" data-duration="5.8" data-track-index="3">
+      <div class="scene-fill-dark">
+        <div id="s3-terminal" class="terminal-container" data-hold="terminal output stream">
+          <div class="term-titlebar">
+            <div class="term-dots">
+              <div class="tdot td-red"></div>
+              <div class="tdot td-yel"></div>
+              <div class="tdot td-grn"></div>
+            </div>
+            <div class="term-bar-title" data-layout-ignore="true">claude-code — stdio FastMCP — 80x24</div>
+            <div style="font-size: 15px; color: #3fb950; font-family: var(--font-mono); font-weight: 700;" data-layout-ignore="true">
+              ● 0 FOCUS LOSS
+            </div>
+          </div>
+          <div class="term-body" data-layout-ignore="true">
+            <div><span class="c-prompt">user@macbook</span> <span class="c-meta">claude "Find the top 3 trending Reel formats on Instagram"</span></div>
+            <div class="c-box">
+              <span style="color: #79c0ff; font-weight: 700;">Tool Call:</span> ghost-cua-meta-ai / meta_ai_research<br>
+              <span class="c-dim">Target:</span> com.meta.endo.vanilla (PID 806) | Space: Desktop 1 (Background)
+            </div>
+            <div id="s3-step1" class="c-green">✔ Staged prompt via Darwin Accessibility IPC (0 mouse movement)</div>
+            <div id="s3-step2" class="c-green">✔ Meta AI Thinking mode complete -> Extracted 13,154 characters</div>
+            <div id="s3-step3" class="c-dim">✔ Restored user pasteboard losslessly</div>
+            <div id="s3-res" style="margin-top: 16px;">
+              <span class="c-accent">1. POV Silent Code Demos (3.2x saves)</span> · 
+              <span class="c-accent">2. Split-Pivoted Video Essays (1.8x retention)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCENE 4: Open Source Outro (14.0s – 18.0s) -->
+    <section id="scene-4" class="clip" data-start="14.0" data-duration="4.0" data-track-index="4">
+      <div class="scene-fill-light">
+        <h1 id="s4-title" class="outro-h1">Keep coding while your agent works.</h1>
+        <p id="s4-sub" class="outro-sub">Zero screen hijacking. Zero focus loss. Native macOS Darwin IPC.</p>
+
+        <div id="s4-chips" class="outro-chip-row">
+          <span class="outro-chip accent">Claude Code (CLI)</span>
+          <span class="outro-chip">Cursor</span>
+          <span class="outro-chip">Antigravity</span>
+          <span class="outro-chip">Codex</span>
+          <span class="outro-chip">100% Free & Open Source</span>
+        </div>
+
+        <div id="s4-repo" class="outro-repo-box">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+          </svg>
+          github.com/vaibhav-space/ghost-cua
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    window.__timelines = window.__timelines || {};
+    const tl = gsap.timeline({ paused: true });
+
+    // Scene 1: Hook animations (0.0s - 3.8s)
+    tl.from("#s1-badge", { y: -20, opacity: 0, duration: 0.4, ease: "power2.out" }, 0.0);
+    tl.from("#s1-title", { y: 20, duration: 0.5, ease: "power3.out" }, 0.0);
+    tl.from("#s1-sub", { y: 20, opacity: 0, duration: 0.5, ease: "power3.out" }, 0.3);
+    tl.from("#s1-punch", { scale: 0.95, opacity: 0, duration: 0.5, ease: "power2.out" }, 0.8);
+    tl.to(["#s1-badge", "#s1-title", "#s1-sub", "#s1-punch"], { opacity: 0, duration: 0.3, ease: "power2.in" }, 3.5);
+
+    // Scene 2: Telemetry animations (3.8s - 8.2s)
+    tl.from("#s2-header", { y: -30, opacity: 0, duration: 0.5, ease: "power3.out" }, 4.0);
+    tl.from("#s2-sub", { y: 20, opacity: 0, duration: 0.5, ease: "power3.out" }, 4.2);
+    tl.from("#tc-1", { y: 40, opacity: 0, duration: 0.4, ease: "back.out(1.4)" }, 4.5);
+    tl.from("#tc-2", { y: 40, opacity: 0, duration: 0.4, ease: "back.out(1.4)" }, 4.7);
+    tl.from("#tc-3", { y: 40, opacity: 0, duration: 0.4, ease: "back.out(1.4)" }, 4.9);
+    tl.from("#tc-4", { y: 40, opacity: 0, duration: 0.4, ease: "back.out(1.4)" }, 5.1);
+    tl.to(["#s2-header", "#s2-sub", "#tc-1", "#tc-2", "#tc-3", "#tc-4"], { opacity: 0, duration: 0.3, ease: "power2.in" }, 7.9);
+
+    // Scene 3: Claude Code Terminal (8.2s - 14.0s)
+    tl.from("#s3-terminal", { scale: 0.95, y: 40, opacity: 0, duration: 0.6, ease: "power3.out" }, 8.4);
+    tl.from("#s3-step1", { x: -20, opacity: 0, duration: 0.4, ease: "power2.out" }, 9.2);
+    tl.from("#s3-step2", { x: -20, opacity: 0, duration: 0.4, ease: "power2.out" }, 9.9);
+    tl.from("#s3-step3", { x: -20, opacity: 0, duration: 0.4, ease: "power2.out" }, 10.5);
+    tl.from("#s3-res", { y: 20, opacity: 0, duration: 0.5, ease: "power2.out" }, 11.2);
+    tl.to("#s3-terminal", { opacity: 0, duration: 0.3, ease: "power2.in" }, 13.7);
+
+    // Scene 4: Outro (14.0s - 18.0s)
+    tl.from("#s4-title", { y: 30, opacity: 0, duration: 0.6, ease: "power3.out" }, 14.2);
+    tl.from("#s4-sub", { y: 20, opacity: 0, duration: 0.5, ease: "power3.out" }, 14.6);
+    tl.from("#s4-chips", { y: 20, opacity: 0, duration: 0.5, ease: "power3.out" }, 15.0);
+    tl.from("#s4-repo", { scale: 0.92, opacity: 0, duration: 0.6, ease: "back.out(1.4)" }, 15.4);
+
+    window.__timelines["main"] = tl;
+  </script>
+</body>
+</html>
