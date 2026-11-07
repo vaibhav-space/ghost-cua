@@ -1,0 +1,1422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GhostCUA — Zero-Interruption Background Desktop Automation for Claude Code</title>
+  <meta name="description" content="Operate Meta AI, Google Gemini, and native macOS desktop apps completely in the background from Claude Code, Cursor, and Codex without stealing your mouse, focus, or Spaces.">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #090a0f;
+      --bg-surface: #11131a;
+      --bg-elevated: #181a24;
+      --bg-subtle: #212433;
+      --border: #232736;
+      --border-hover: #373c52;
+      --border-accent: rgba(99, 102, 241, 0.4);
+      
+      --text: #f3f4f6;
+      --text-muted: #9ca3af;
+      --text-dim: #818898;
+      
+      --accent: #6366f1;
+      --accent-hover: #4f46e5;
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      
+      --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --radius-full: 9999px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    ::selection {
+      background: rgba(99, 102, 241, 0.35);
+      color: #ffffff;
+    }
+
+    caret-color: var(--accent);
+
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--bg-subtle);
+      border-radius: var(--radius-full);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px;
+      position: relative;
+    }
+
+    /* Navigation */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      background: rgba(9, 10, 15, 0.85);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 68px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 700;
+      font-size: 1.2rem;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-icon {
+      width: 32px;
+      height: 32px;
+      background: #181a24;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.92rem;
+      font-weight: 500;
+      transition: color 0.15s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+    }
+
+    .nav-cta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 9px 18px;
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.15s ease;
+      cursor: pointer;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: #f3f4f6;
+      color: #090a0f;
+      border-color: #f3f4f6;
+    }
+
+    .btn-primary:hover {
+      background: #ffffff;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    .btn-secondary {
+      background: var(--bg-surface);
+      color: var(--text);
+      border-color: var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-elevated);
+      border-color: var(--border-hover);
+    }
+
+    /* Hero Section */
+    .hero {
+      padding: 96px 0 64px;
+      text-align: center;
+    }
+
+    .hero-title {
+      font-size: clamp(2.4rem, 5.5vw, 4rem);
+      font-weight: 700;
+      line-height: 1.08;
+      letter-spacing: -0.035em;
+      max-width: 960px;
+      margin: 0 auto 24px;
+      color: var(--text);
+    }
+
+    .hero-subtitle {
+      font-size: clamp(1.05rem, 2vw, 1.25rem);
+      color: var(--text-muted);
+      max-width: 760px;
+      margin: 0 auto 36px;
+      line-height: 1.6;
+      font-weight: 400;
+    }
+
+    .hero-subtitle strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .hero-buttons {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 56px;
+      flex-wrap: wrap;
+    }
+
+    .hero-proof-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      max-width: 940px;
+      margin: 0 auto;
+    }
+
+    .proof-item {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      text-align: left;
+    }
+
+    .proof-num {
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: var(--text);
+      display: block;
+      margin-bottom: 2px;
+      letter-spacing: -0.02em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .proof-label {
+      font-size: 0.84rem;
+      color: var(--text-dim);
+      font-weight: 500;
+    }
+
+    /* Interactive Simulator */
+    .sim-section {
+      padding: 72px 0 96px;
+    }
+
+    .section-header {
+      text-align: center;
+      max-width: 740px;
+      margin: 0 auto 44px;
+    }
+
+    .section-title {
+      font-size: clamp(1.85rem, 3.2vw, 2.6rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin-bottom: 14px;
+      line-height: 1.18;
+    }
+
+    .section-desc {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      line-height: 1.55;
+    }
+
+    .sim-toggle-wrapper {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 28px;
+    }
+
+    .sim-toggle-pill {
+      display: inline-flex;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-full);
+      padding: 4px;
+      gap: 4px;
+    }
+
+    .sim-toggle-btn {
+      padding: 9px 20px;
+      border-radius: var(--radius-full);
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .sim-toggle-btn.active-bad {
+      background: rgba(244, 63, 94, 0.14);
+      color: #fda4af;
+      border: 1px solid rgba(244, 63, 94, 0.35);
+    }
+
+    .sim-toggle-btn.active-good {
+      background: rgba(99, 102, 241, 0.18);
+      color: #c7d2fe;
+      border: 1px solid rgba(99, 102, 241, 0.4);
+    }
+
+    .interactive-stage {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: 0 16px 36px -12px rgba(0, 0, 0, 0.6);
+    }
+
+    .stage-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    .code-terminal {
+      background: #0b0d13;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .terminal-header {
+      background: rgba(255, 255, 255, 0.02);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .window-dots {
+      display: flex;
+      gap: 7px;
+    }
+
+    .window-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .dot-red { background: #ef4444; }
+    .dot-yellow { background: #f59e0b; }
+    .dot-green { background: #10b981; }
+
+    .terminal-title {
+      color: var(--text-dim);
+      font-size: 0.78rem;
+    }
+
+    .terminal-body {
+      padding: 18px;
+      color: #e2e8f0;
+      line-height: 1.6;
+      flex: 1;
+      min-height: 380px;
+      white-space: pre-wrap;
+    }
+
+    .cmd-prompt { color: #818cf8; font-weight: 600; }
+    .cmd-meta { color: #38bdf8; }
+    .cmd-gemini { color: #34d399; }
+    .cmd-danger { color: #fb7185; }
+    .cmd-success { color: #4ade80; }
+
+    .simulator-visual {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .sim-status-banner {
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+      font-weight: 600;
+      font-size: 0.92rem;
+    }
+
+    .status-bad {
+      background: rgba(244, 63, 94, 0.1);
+      border: 1px solid rgba(244, 63, 94, 0.28);
+      color: #fda4af;
+    }
+
+    .status-good {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.28);
+      color: #6ee7b7;
+    }
+
+    .screen-mockup {
+      background: #090a0f;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      height: 230px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mockup-app-window {
+      position: absolute;
+      width: 78%;
+      height: 75%;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #141721;
+      padding: 12px;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .mockup-app-window.foreground {
+      transform: translate(0, 0) scale(1);
+      box-shadow: 0 16px 30px rgba(0, 0, 0, 0.7);
+      z-index: 10;
+    }
+
+    .mockup-app-window.background {
+      transform: translate(24px, 20px) scale(0.92);
+      opacity: 0.45;
+      z-index: 1;
+    }
+
+    .mockup-cursor {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      pointer-events: none;
+      z-index: 20;
+      transition: all 0.35s cubic-bezier(0.2, 0, 0, 1);
+    }
+
+    .sim-details-list {
+      margin-top: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 0.88rem;
+    }
+
+    .sim-detail-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    .sim-detail-item strong {
+      color: var(--text);
+    }
+
+    .sim-icon-status {
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* Core Use Cases */
+    .use-cases-section {
+      padding: 72px 0 96px;
+      border-top: 1px solid var(--border);
+    }
+
+    .cases-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .case-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+    }
+
+    .case-card:hover {
+      border-color: var(--border-hover);
+      box-shadow: 0 12px 28px -10px rgba(0, 0, 0, 0.5);
+    }
+
+    .card-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      margin-bottom: 16px;
+      width: fit-content;
+    }
+
+    .badge-meta {
+      background: rgba(56, 189, 248, 0.12);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.25);
+    }
+
+    .badge-gemini {
+      background: rgba(52, 211, 153, 0.12);
+      color: #34d399;
+      border: 1px solid rgba(52, 211, 153, 0.25);
+    }
+
+    .badge-custom {
+      background: rgba(192, 132, 252, 0.12);
+      color: #c084fc;
+      border: 1px solid rgba(192, 132, 252, 0.25);
+    }
+
+    .case-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 14px;
+      line-height: 1.3;
+      letter-spacing: -0.015em;
+    }
+
+    .case-pain-block {
+      margin-bottom: 14px;
+      font-size: 0.88rem;
+      color: #fda4af;
+      line-height: 1.5;
+    }
+
+    .case-solution {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+      margin-bottom: 20px;
+    }
+
+    .case-snippet {
+      background: #090a0f;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: #cbd5e1;
+      overflow-x: auto;
+      line-height: 1.5;
+    }
+
+    /* MCP Section */
+    .mcp-section {
+      padding: 72px 0 96px;
+      border-top: 1px solid var(--border);
+    }
+
+    .mcp-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 36px;
+      display: grid;
+      grid-template-columns: 1fr 1.25fr;
+      gap: 36px;
+      align-items: center;
+    }
+
+    .mcp-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 14px;
+      line-height: 1.25;
+    }
+
+    .mcp-desc {
+      color: var(--text-muted);
+      font-size: 1rem;
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+
+    .mcp-clients {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+
+    .client-chip {
+      padding: 5px 12px;
+      border-radius: var(--radius-full);
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .client-chip.highlight {
+      background: rgba(99, 102, 241, 0.15);
+      border-color: var(--accent);
+      color: #c7d2fe;
+    }
+
+    .copy-block {
+      background: #090a0f;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+
+    .copy-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      background: rgba(255, 255, 255, 0.02);
+      border-bottom: 1px solid var(--border);
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--text-dim);
+    }
+
+    .copy-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-muted);
+      padding: 4px 10px;
+      font-size: 0.78rem;
+      font-family: var(--font-sans);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .copy-btn:hover {
+      background: var(--bg-elevated);
+      color: var(--text);
+      border-color: var(--border-hover);
+    }
+
+    .copy-code {
+      padding: 18px;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      line-height: 1.55;
+      color: #e2e8f0;
+      overflow-x: auto;
+    }
+
+    /* Comparison Table */
+    .table-section {
+      padding: 72px 0 96px;
+      border-top: 1px solid var(--border);
+    }
+
+    .comp-table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      background: var(--bg-surface);
+      padding: 8px 12px;
+    }
+
+    table.comp-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.92rem;
+    }
+
+    table.comp-table th,
+    table.comp-table td {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    table.comp-table th {
+      font-weight: 700;
+      color: var(--text);
+      font-size: 0.88rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    table.comp-table th.highlight-col,
+    table.comp-table td.highlight-col {
+      background: rgba(99, 102, 241, 0.05);
+      border-left: 1px solid rgba(99, 102, 241, 0.2);
+      border-right: 1px solid rgba(99, 102, 241, 0.2);
+    }
+
+    table.comp-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .cell-val {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .val-good { color: #34d399; font-weight: 600; }
+    .val-bad { color: #f87171; font-weight: 500; }
+
+    /* CTA Section */
+    .cta-banner {
+      margin: 72px 0 96px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-accent);
+      border-radius: var(--radius-lg);
+      padding: 56px 36px;
+      text-align: center;
+    }
+
+    .cta-banner h2 {
+      font-size: clamp(1.85rem, 3.5vw, 2.75rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin-bottom: 14px;
+    }
+
+    .cta-banner p {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      max-width: 620px;
+      margin: 0 auto 32px;
+      line-height: 1.55;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 36px 0;
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 0.88rem;
+    }
+
+    footer a {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      color: var(--text);
+    }
+
+    @media (max-width: 900px) {
+      .stage-grid { grid-template-columns: 1fr; }
+      .cases-grid { grid-template-columns: 1fr; }
+      .mcp-card { grid-template-columns: 1fr; }
+      .hero-proof-bar { grid-template-columns: repeat(2, 1fr); }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <header>
+    <div class="container nav-inner">
+      <a href="#" class="brand">
+        <div class="brand-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 10h.01M15 10h.01M12 2a8 8 0 0 0-8 8v12l3-3 2.5 2.5L12 19l2.5 2.5L17 19l3 3V10a8 8 0 0 0-8-8z"/>
+          </svg>
+        </div>
+        <span>GhostCUA</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="#simulator">Interactive Sim</a></li>
+        <li><a href="#use-cases">Use Cases</a></li>
+        <li><a href="#mcp">Claude Code MCP</a></li>
+        <li><a href="#comparison">Architecture</a></li>
+        <li><a href="https://github.com/vaibhav-space/ghost-cua" target="_blank">GitHub</a></li>
+      </ul>
+
+      <div class="nav-cta">
+        <a href="https://github.com/vaibhav-space/ghost-cua" target="_blank" class="btn btn-secondary">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+          </svg>
+          Star on GitHub
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <h1 class="hero-title">
+        The Computer Use Agent That Doesn’t Hijack Your Mac.
+      </h1>
+
+      <p class="hero-subtitle">
+        Give <strong>Claude Code</strong>, <strong>Cursor</strong>, and <strong>Antigravity</strong> deep access to native desktop apps like <strong>Meta AI</strong> (for live Instagram trends) and <strong>Gemini</strong> (for multimodal video QA) — executing 100% in the background via native macOS IPC while you keep coding.
+      </p>
+
+      <div class="hero-buttons">
+        <a href="#mcp" class="btn btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="4 17 10 11 4 5"/>
+            <line x1="12" y1="19" x2="20" y2="19"/>
+          </svg>
+          Add to Claude Code via MCP
+        </a>
+        <a href="https://github.com/vaibhav-space/ghost-cua" target="_blank" class="btn btn-secondary">
+          View Open Source Repo
+        </a>
+      </div>
+
+      <div class="hero-proof-bar">
+        <div class="proof-item">
+          <span class="proof-num">0px</span>
+          <span class="proof-label">Physical cursor drift</span>
+        </div>
+        <div class="proof-item">
+          <span class="proof-num">0ms</span>
+          <span class="proof-label">Focus lost from IDE</span>
+        </div>
+        <div class="proof-item">
+          <span class="proof-num">0</span>
+          <span class="proof-label">Mission Control swooshes</span>
+        </div>
+        <div class="proof-item">
+          <span class="proof-num">~500</span>
+          <span class="proof-label">Lines of clean Python</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Head-to-Head Simulator -->
+  <section id="simulator" class="sim-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">If you can’t use your computer, it’s not automation.</h2>
+        <p class="section-desc">Experience the side-by-side difference between traditional screen-hijacking CUAs and GhostCUA’s invisible background engine.</p>
+      </div>
+
+      <div class="sim-toggle-wrapper">
+        <div class="sim-toggle-pill">
+          <button id="btn-bad" class="sim-toggle-btn active-bad" onclick="setSimMode('traditional')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+            </svg>
+            Traditional Screen-Hijacking CUA
+          </button>
+          <button id="btn-good" class="sim-toggle-btn" onclick="setSimMode('ghost')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2a8 8 0 0 0-8 8v12l3-3 2.5 2.5L12 19l2.5 2.5L17 19l3 3V10a8 8 0 0 0-8-8z"/>
+            </svg>
+            GhostCUA Background Engine
+          </button>
+        </div>
+      </div>
+
+      <div class="interactive-stage">
+        <div class="stage-grid">
+          <!-- Terminal -->
+          <div class="code-terminal">
+            <div class="terminal-header">
+              <div class="window-dots">
+                <div class="window-dot dot-red"></div>
+                <div class="window-dot dot-yellow"></div>
+                <div class="window-dot dot-green"></div>
+              </div>
+              <span class="terminal-title" id="terminal-mode-title">Terminal — claude-code</span>
+              <span style="font-size: 0.72rem; color: #4ade80;">ACTIVE</span>
+            </div>
+            <div class="terminal-body" id="terminal-content"></div>
+          </div>
+
+          <!-- Desktop Visualizer -->
+          <div class="simulator-visual">
+            <div id="sim-status" class="sim-status-banner status-bad"></div>
+
+            <div class="screen-mockup">
+              <!-- Mock IDE -->
+              <div class="mockup-app-window foreground" id="win-ide">
+                <div style="display: flex; gap: 4px; align-items: center; margin-bottom: 6px;">
+                  <div style="width: 8px; height: 8px; border-radius: 50%; background: #475569;"></div>
+                  <span style="font-size: 0.7rem; color: #818898;">VS Code — editor.tsx</span>
+                </div>
+                <div style="background: rgba(255,255,255,0.04); height: 10px; width: 60%; border-radius: 4px;"></div>
+                <div style="background: rgba(255,255,255,0.04); height: 10px; width: 85%; border-radius: 4px;"></div>
+                <div style="background: rgba(255,255,255,0.04); height: 10px; width: 40%; border-radius: 4px;"></div>
+                <div id="ide-focus-indicator" style="font-size: 0.72rem; color: #f43f5e; margin-top: auto; font-weight: 600;">
+                  Focus stolen by automation
+                </div>
+              </div>
+
+              <!-- Mock Target Desktop App -->
+              <div class="mockup-app-window background" id="win-desktop">
+                <div style="display: flex; gap: 4px; align-items: center; margin-bottom: 6px;">
+                  <div style="width: 8px; height: 8px; border-radius: 50%; background: #6366f1;"></div>
+                  <span style="font-size: 0.7rem; color: #818cf8;">Meta AI (Thinking)</span>
+                </div>
+                <div style="background: rgba(99,102,241,0.1); height: 26px; border-radius: 4px; border: 1px dashed rgba(99,102,241,0.3); display: flex; align-items: center; padding: 0 8px; font-size: 0.65rem; color: #a5b4fc;">
+                  Processing Instagram Trends...
+                </div>
+              </div>
+
+              <!-- Hardware Cursor -->
+              <svg class="mockup-cursor" id="sim-cursor" viewBox="0 0 24 24" fill="white" stroke="black" stroke-width="1.5">
+                <path d="M3 3l7 18 3-7 7-3L3 3z"/>
+              </svg>
+            </div>
+
+            <div class="sim-details-list" id="sim-details"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Real-World Scenarios -->
+  <section id="use-cases" class="use-cases-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Why Developers Need GhostCUA</h2>
+        <p class="section-desc">Stop doing manual copy-paste ping-pong between AI chatbots. Let Claude Code delegate autonomously.</p>
+      </div>
+
+      <div class="cases-grid">
+        <!-- Card 1: Meta AI -->
+        <div class="case-card">
+          <div>
+            <div class="card-badge badge-meta">Native Instagram Index</div>
+            <h3 class="case-title">Live Instagram Reel Trends & Hooks</h3>
+            
+            <div class="case-pain-block">
+              <strong>The Brute Force Problem:</strong> Claude Code lacks live Instagram access. Developers spend 45 minutes copying prompts into Meta AI, waiting, copying responses, and pasting back into Claude.
+            </div>
+
+            <p class="case-solution">
+              Claude calls <code>meta_ai_research</code> via MCP. Meta AI activates Thinking mode silently in the background, queries Meta's live index, and streams 13,000+ characters of trend data straight into Claude's prompt.
+            </p>
+          </div>
+
+          <div class="case-snippet">
+            <span style="color: #38bdf8;">claude</span> "Find the top 3 trending reel formats on Instagram"<br>
+            <span style="color: #818898;">→ GhostCUA: Meta AI (Thinking Mode)</span><br>
+            <span style="color: #4ade80;">Delivered 13,154 chars of verified trend insights</span>
+          </div>
+        </div>
+
+        <!-- Card 2: Gemini Desktop -->
+        <div class="case-card">
+          <div>
+            <div class="card-badge badge-gemini">Temporal Multimodal Audio/Video</div>
+            <h3 class="case-title">Deep Continuous Video & Audio QA</h3>
+            
+            <div class="case-pain-block">
+              <strong>The Brute Force Problem:</strong> Claude can only inspect 1 or 2 static image frames. It cannot evaluate full continuous video pacing, dialogue cadence, or audio-visual synchronization.
+            </div>
+
+            <p class="case-solution">
+              Claude delegates the video file via <code>gemini_query</code>. GhostCUA dispatches a process-targeted Carbon AppleEvent directly to Gemini. Gemini's video foundation model watches the complete footage and returns second-by-second timeline review.
+            </p>
+          </div>
+
+          <div class="case-snippet">
+            <span style="color: #34d399;">claude</span> "Audit pacing and audio sync of demo.mp4"<br>
+            <span style="color: #818898;">→ GhostCUA: Process-targeted aevt/odoc</span><br>
+            <span style="color: #4ade80;">Extracted detailed scene critique in 27s</span>
+          </div>
+        </div>
+
+        <!-- Card 3: Universal AGENT.md -->
+        <div class="case-card">
+          <div>
+            <div class="card-badge badge-custom">Universal 5-Phase Blueprint</div>
+            <h3 class="case-title">Automate ANY macOS App in Minutes</h3>
+            
+            <div class="case-pain-block">
+              <strong>The Brute Force Problem:</strong> Integrating a custom Mac app into your coding agent usually requires days of wrestling with brittle OCR, coordinate clicking, and permission dialogs.
+            </div>
+
+            <p class="case-solution">
+              Point Claude Code or Cursor to <code>AGENT.md</code>. The specification gives any AI agent the exact 5-step recipe (DFS accessibility tree, Carbon event staging, verified submission loop) to build a new background adapter in under 5 minutes.
+            </p>
+          </div>
+
+          <div class="case-snippet">
+            <span style="color: #c084fc;">claude</span> "Build background automation for App X via AGENT.md"<br>
+            <span style="color: #818898;">→ Reads AGENT.md specification</span><br>
+            <span style="color: #4ade80;">Outputs working zero-interruption adapter</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Claude Code MCP Integration -->
+  <section id="mcp" class="mcp-section">
+    <div class="container">
+      <div class="mcp-card">
+        <div>
+          <h2 class="mcp-title">Built For Your Coding Agent Workflow</h2>
+          <p class="mcp-desc">
+            GhostCUA ships with native Model Context Protocol (MCP) servers. Configure it once, and Claude Code, Cursor, Zed, or Antigravity can call desktop apps as first-class tools.
+          </p>
+
+          <div class="mcp-clients">
+            <span class="client-chip highlight">Claude Code (CLI)</span>
+            <span class="client-chip">Cursor</span>
+            <span class="client-chip">Antigravity</span>
+            <span class="client-chip">Codex</span>
+            <span class="client-chip">Zed</span>
+          </div>
+
+          <a href="https://github.com/vaibhav-space/ghost-cua" target="_blank" class="btn btn-primary">
+            Get Started on GitHub
+          </a>
+        </div>
+
+        <div class="copy-block">
+          <div class="copy-bar">
+            <span>~/.cursor/mcp.json or claude_desktop_config.json</span>
+            <button class="copy-btn" onclick="copyMcpConfig(this)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              <span>Copy Config</span>
+            </button>
+          </div>
+          <pre class="copy-code"><code>{
+  "mcpServers": {
+    "ghost-cua-gemini": {
+      "command": "/path/to/ghost-cua/.venv/bin/python",
+      "args": ["/path/to/ghost-cua/gemini_mcp.py"]
+    },
+    "ghost-cua-meta-ai": {
+      "command": "/path/to/ghost-cua/.venv/bin/python",
+      "args": ["/path/to/ghost-cua/meta_ai_mcp.py"]
+    }
+  }
+}</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Benchmark Comparison -->
+  <section id="comparison" class="table-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">The Engineering Difference</h2>
+        <p class="section-desc">Why GhostCUA outperforms existing heavyweight desktop automation frameworks.</p>
+      </div>
+
+      <div class="comp-table-wrap">
+        <table class="comp-table">
+          <thead>
+            <tr>
+              <th>Capability</th>
+              <th class="highlight-col">GhostCUA (Ours)</th>
+              <th>Anthropic CUA</th>
+              <th>mac-cua</th>
+              <th>trycua / CUA</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Runs 100% in Background</strong></td>
+              <td class="highlight-col"><span class="cell-val val-good">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                Yes (0 Focus Theft)
+              </span></td>
+              <td><span class="cell-val val-bad">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                Hijacks screen
+              </span></td>
+              <td><span class="cell-val val-bad">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                Flashes windows
+              </span></td>
+              <td><span class="cell-val val-bad">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                Requires focus
+              </span></td>
+            </tr>
+            <tr>
+              <td><strong>Preserves Physical Mouse</strong></td>
+              <td class="highlight-col"><span class="cell-val val-good">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                0 Cursor Movement
+              </span></td>
+              <td><span class="cell-val val-bad">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                Moves pointer
+              </span></td>
+              <td><span class="cell-val val-bad">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                Clicks screen
+              </span></td>
+              <td><span class="cell-val val-bad">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                Coordinate clicks
+              </span></td>
+            </tr>
+            <tr>
+              <td><strong>Mission Control Space Swoosh</strong></td>
+              <td class="highlight-col"><span class="cell-val val-good">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                0 Space Changes
+              </span></td>
+              <td><span class="cell-val val-bad">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                Frequent jumps
+              </span></td>
+              <td><span class="cell-val val-bad">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                Swooshes spaces
+              </span></td>
+              <td><span class="cell-val val-bad">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                Swooshes spaces
+              </span></td>
+            </tr>
+            <tr>
+              <td><strong>Screen Recording Permission</strong></td>
+              <td class="highlight-col"><span class="cell-val val-good">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                Not Required
+              </span></td>
+              <td><span class="cell-val val-bad">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                Mandatory
+              </span></td>
+              <td><span class="cell-val val-bad">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                Trips SCK breaker
+              </span></td>
+              <td><span class="cell-val val-bad">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                Mandatory
+              </span></td>
+            </tr>
+            <tr>
+              <td><strong>Framework Footprint</strong></td>
+              <td class="highlight-col"><span class="cell-val val-good">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                ~500 lines of Python
+              </span></td>
+              <td>~400MB runtime</td>
+              <td>170MB multi-process</td>
+              <td>1.1 GB Rust ecosystem</td>
+            </tr>
+            <tr>
+              <td><strong>User Clipboard Safety</strong></td>
+              <td class="highlight-col"><span class="cell-val val-good">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                Full snapshot + restore
+              </span></td>
+              <td><span class="cell-val val-bad">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                Overwrites pasteboard
+              </span></td>
+              <td><span class="cell-val val-bad">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                Overwrites pasteboard
+              </span></td>
+              <td><span class="cell-val val-bad">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                Overwrites pasteboard
+              </span></td>
+            </tr>
+            <tr>
+              <td><strong>Media Attachment Safety</strong></td>
+              <td class="highlight-col"><span class="cell-val val-good">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                Verified clearance loop
+              </span></td>
+              <td><span class="cell-val val-bad">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                Blind clicks
+              </span></td>
+              <td><span class="cell-val val-bad">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                Blind clicks
+              </span></td>
+              <td><span class="cell-val val-bad">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                Blind clicks
+              </span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <div class="container">
+    <div class="cta-banner">
+      <h2>Keep Coding While Your Agent Works.</h2>
+      <p>Clone the open-source repository, link it to Claude Code or Cursor via MCP, and never lose keyboard focus again.</p>
+      
+      <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+        <a href="https://github.com/vaibhav-space/ghost-cua" target="_blank" class="btn btn-primary" style="padding: 12px 28px; font-size: 0.95rem;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+          </svg>
+          Clone ghost-cua on GitHub
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <p>GhostCUA is an open-source project created by <a href="https://github.com/vaibhav-space" target="_blank" style="text-decoration: underline;">Vaibhav Dubey</a>. Released under the MIT License.</p>
+    </div>
+  </footer>
+
+  <script>
+    const terminalContent = document.getElementById('terminal-content');
+    const simStatus = document.getElementById('sim-status');
+    const simDetails = document.getElementById('sim-details');
+    const winIde = document.getElementById('win-ide');
+    const winDesktop = document.getElementById('win-desktop');
+    const simCursor = document.getElementById('sim-cursor');
+    const ideFocusIndicator = document.getElementById('ide-focus-indicator');
+    const btnBad = document.getElementById('btn-bad');
+    const btnGood = document.getElementById('btn-good');
+    const terminalModeTitle = document.getElementById('terminal-mode-title');
+
+    function setSimMode(mode) {
+      if (mode === 'traditional') {
+        btnBad.className = 'sim-toggle-btn active-bad';
+        btnGood.className = 'sim-toggle-btn';
+        terminalModeTitle.innerText = 'Terminal — claude-code (FROZEN)';
+
+        terminalContent.innerHTML = `
+<span class="cmd-prompt">user@macbook</span> <span class="cmd-meta">claude</span>
+> Researching viral Instagram reels for our next product launch...
+
+<span class="cmd-danger">TRADITIONAL CUA INITIATED:</span>
+[14:20:01] Taking over display...
+[14:20:02] <span class="cmd-danger">Stealing mouse pointer</span>: Moving to (450, 720)
+[14:20:03] <span class="cmd-danger">Mission Control Space swoosh</span> triggered
+[14:20:04] Window forced to foreground: Meta AI
+[14:20:05] Typing simulated keystrokes...
+[14:20:07] <span class="cmd-danger">USER ATTEMPTED TO TYPE IN VS CODE: KEYSTROKES LOST</span>
+[14:20:10] Waiting for screen capture...
+`;
+
+        simStatus.className = 'sim-status-banner status-bad';
+        simStatus.innerHTML = `
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"></polygon>
+            <line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          Computer Hijacked. Cursor moving, active window lost.
+        `;
+
+        winIde.className = 'mockup-app-window background';
+        winDesktop.className = 'mockup-app-window foreground';
+        ideFocusIndicator.style.display = 'block';
+        simCursor.style.transform = 'translate(130px, 110px)';
+
+        simDetails.innerHTML = `
+          <div class="sim-detail-item">
+            <svg class="sim-icon-status" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f43f5e" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            <div><strong>Mouse Cursor:</strong> Darting across display, clicks interrupting user.</div>
+          </div>
+          <div class="sim-detail-item">
+            <svg class="sim-icon-status" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f43f5e" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            <div><strong>Active Window:</strong> IDE loses keyboard focus; typing goes into void.</div>
+          </div>
+          <div class="sim-detail-item">
+            <svg class="sim-icon-status" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f43f5e" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            <div><strong>Desktop Spaces:</strong> Screen jerked to another Mission Control space.</div>
+          </div>
+          <div class="sim-detail-item">
+            <svg class="sim-icon-status" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f43f5e" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            <div><strong>Screen Recording:</strong> Heavy 60fps ScreenCaptureKit loops eating battery.</div>
+          </div>
+        `;
+
+      } else {
+        btnGood.className = 'sim-toggle-btn active-good';
+        btnBad.className = 'sim-toggle-btn';
+        terminalModeTitle.innerText = 'Terminal — claude-code (STREAMING)';
+
+        terminalContent.innerHTML = `
+<span class="cmd-prompt">user@macbook</span> <span class="cmd-meta">claude</span>
+> Researching viral Instagram reels for our next product launch...
+
+<span class="cmd-success">GHOST-CUA BACKGROUND ENGINE ACTIVE:</span>
+[14:23:09] Initial State | Frontmost: <span class="cmd-gemini">com.microsoft.VSCode</span>
+[14:23:09] Targeting PID 806 (Meta AI) via native Accessibility
+[14:23:09] Model locked to: <span class="cmd-meta">Thinking Mode</span>
+[14:23:10] Native text injected via AXUIElementSetAttributeValue
+[14:23:11] Verified submission: Composer text cleared
+[14:23:25] <span class="cmd-success">Response extracted (13,154 chars)</span> via lossless clipboard restoration
+[14:23:25] Final State | Frontmost: <span class="cmd-gemini">com.microsoft.VSCode</span>
+[14:23:25] <span class="cmd-success">VERIFIED: 0 cursor movement. 0 focus theft.</span>
+`;
+
+        simStatus.className = 'sim-status-banner status-good';
+        simStatus.innerHTML = `
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          100% Background Execution. Your IDE stays frontmost.
+        `;
+
+        winIde.className = 'mockup-app-window foreground';
+        winDesktop.className = 'mockup-app-window background';
+        ideFocusIndicator.style.display = 'none';
+        simCursor.style.transform = 'translate(35px, 35px)';
+
+        simDetails.innerHTML = `
+          <div class="sim-detail-item">
+            <svg class="sim-icon-status" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <div><strong>Mouse Cursor:</strong> 0 movement. Physical mouse stays untouched.</div>
+          </div>
+          <div class="sim-detail-item">
+            <svg class="sim-icon-status" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <div><strong>Active Window:</strong> VS Code retains 100% keyboard focus.</div>
+          </div>
+          <div class="sim-detail-item">
+            <svg class="sim-icon-status" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <div><strong>Desktop Spaces:</strong> 0 switches (direct Carbon AppleEvent dispatch).</div>
+          </div>
+          <div class="sim-detail-item">
+            <svg class="sim-icon-status" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <div><strong>Clipboard:</strong> User pasteboard backed up and restored losslessly.</div>
+          </div>
+        `;
+      }
+    }
+
+    setSimMode('ghost');
+
+    function copyMcpConfig(btn) {
+      const code = `{
+  "mcpServers": {
+    "ghost-cua-gemini": {
+      "command": "/path/to/ghost-cua/.venv/bin/python",
+      "args": ["/path/to/ghost-cua/gemini_mcp.py"]
+    },
+    "ghost-cua-meta-ai": {
+      "command": "/path/to/ghost-cua/.venv/bin/python",
+      "args": ["/path/to/ghost-cua/meta_ai_mcp.py"]
+    }
+  }
+}`;
+      navigator.clipboard.writeText(code).then(() => {
+        const textSpan = btn.querySelector('span');
+        const orig = textSpan.innerText;
+        textSpan.innerText = 'Copied!';
+        btn.style.borderColor = '#10b981';
+        btn.style.color = '#34d399';
+        setTimeout(() => {
+          textSpan.innerText = orig;
+          btn.style.borderColor = '';
+          btn.style.color = '';
+        }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>

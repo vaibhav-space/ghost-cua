@@ -19,3 +19,9 @@ __pycache__/
 
 # macOS metadata
 .DS_Store
+
+# Agent & IDE workspace scratch
+.gemini/
+.claude/
+.cursor/
+
