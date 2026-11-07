@@ -396,6 +396,143 @@
       display: block;
     }
 
+    /* Video Showcase Section */
+    .video-showcase-wrap {
+      max-width: 1100px;
+      margin: 0 auto 50px;
+      background: #0d1117;
+      border-radius: var(--radius-lg);
+      box-shadow: 0 24px 60px -12px rgba(15, 23, 42, 0.18), 0 0 0 1px rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      overflow: hidden;
+      text-align: left;
+      padding: 10px;
+      position: relative;
+    }
+
+    .video-titlebar {
+      min-height: 48px;
+      background: #161b22;
+      border-radius: var(--radius-md) var(--radius-md) 0 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 18px;
+      gap: 16px;
+    }
+
+    .video-title-text {
+      font-size: 0.82rem;
+      font-family: var(--font-mono);
+      color: #c9d1d9;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .video-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      background: rgba(35, 134, 54, 0.2);
+      border: 1px solid rgba(46, 160, 67, 0.35);
+      color: #3fb950;
+      font-size: 0.74rem;
+      font-family: var(--font-mono);
+      font-weight: 600;
+    }
+
+    .video-badge .pulse-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #3fb950;
+      box-shadow: 0 0 8px #3fb950;
+      animation: pulseLive 2s infinite ease-in-out;
+    }
+
+    @keyframes pulseLive {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .video-screen {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #000000;
+      overflow: hidden;
+    }
+
+    .video-screen video {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      outline: none;
+    }
+
+    .video-meta-bar {
+      padding: 14px 18px;
+      background: #161b22;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 0 0 var(--radius-md) var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .video-meta-tags {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .v-pill {
+      font-size: 0.76rem;
+      font-family: var(--font-mono);
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.06);
+      color: #8b949e;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .v-pill.lead-pill {
+      background: rgba(37, 99, 235, 0.18);
+      border-color: rgba(56, 139, 253, 0.4);
+      color: #79c0ff;
+      font-weight: 600;
+    }
+
+    .btn-download-video {
+      padding: 6px 14px;
+      font-size: 0.78rem;
+      font-family: var(--font-mono);
+      background: rgba(255, 255, 255, 0.08);
+      color: #f0f6fc;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 6px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .btn-download-video:hover {
+      background: rgba(255, 255, 255, 0.16);
+      color: #ffffff;
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
     /* Head-to-Head Comparison Architecture */
     .comparison-section {
       padding: 80px 0 100px;
@@ -855,7 +992,8 @@
       </a>
 
       <ul class="nav-links">
-        <li><a href="#interactive-stage">Live Demo</a></li>
+        <li><a href="#video-demo">Launch Video</a></li>
+        <li><a href="#interactive-stage">Terminal Demo</a></li>
         <li><a href="#architecture">Architecture</a></li>
         <li><a href="#workflows">Workflows</a></li>
         <li><a href="#mcp">Claude Code MCP</a></li>
@@ -893,6 +1031,12 @@
           </svg>
           Add to Claude Code via MCP
         </a>
+        <a href="#video-demo" class="btn btn-secondary" onclick="playLaunchVideo(event)" style="padding: 12px 26px; font-size: 0.96rem; display: inline-flex; align-items: center; gap: 8px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <polygon points="5 3 19 12 5 21 5 3"/>
+          </svg>
+          Watch 18s Video Demo
+        </a>
         <a href="https://github.com/vaibhav-space/ghost-cua" target="_blank" class="btn btn-secondary" style="padding: 12px 26px; font-size: 0.96rem;">
           Clone Open Source Engine
         </a>
@@ -928,6 +1072,72 @@
             Lines of Clean Python
           </span>
         </div>
+      </div>
+
+      <!-- 18-Second Launch Video Showcase -->
+      <div style="text-align: center; margin-bottom: 24px;">
+        <div style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 9999px; background: #eff6ff; border: 1px solid #bfdbfe; color: #1d4ed8; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 8px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Official Launch Demo · 18 Seconds
+        </div>
+        <h2 style="font-size: clamp(1.4rem, 2.5vw, 1.85rem); font-weight: 700; color: var(--ink); letter-spacing: -0.02em;">
+          See GhostCUA In Action
+        </h2>
+        <p style="font-size: 0.95rem; color: var(--ink-secondary); max-width: 600px; margin: 4px auto 0;">
+          Watch traditional CUAs steal cursor focus vs. GhostCUA silently executing in the background.
+        </p>
+      </div>
+
+      <div id="video-demo" class="video-showcase-wrap">
+        <div class="video-titlebar">
+          <div class="traffic-lights">
+            <div class="traffic-dot traffic-close"></div>
+            <div class="traffic-dot traffic-min"></div>
+            <div class="traffic-dot traffic-max"></div>
+          </div>
+          <div class="video-title-text">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>
+            <span>GhostCUA — 18-Second Launch Demo (1080p · Stereo Audio)</span>
+          </div>
+          <div class="video-badge">
+            <span class="pulse-dot"></span>
+            <span>18s · 1080p HD</span>
+          </div>
+        </div>
+
+        <div class="video-screen">
+          <video id="ghost-cua-video" controls playsinline preload="metadata" poster="assets/ghost-cua-launch.jpg">
+            <source src="assets/ghost-cua-launch.mp4" type="video/mp4">
+            Your browser does not support HTML5 video.
+          </video>
+        </div>
+
+        <div class="video-meta-bar">
+          <div class="video-meta-tags">
+            <span class="v-pill lead-pill">0:00 The Mouse Hijack Flaw</span>
+            <span class="v-pill">0:04 Bass Drop & Architecture</span>
+            <span class="v-pill">0:09 Dual Workstation Proof</span>
+            <span class="v-pill">0:14 Agent Pipeline Close</span>
+          </div>
+          <a href="assets/ghost-cua-launch.mp4" download="ghost-cua-launch.mp4" class="btn-download-video">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download 1080p MP4 (3.2 MB)
+          </a>
+        </div>
+      </div>
+
+      <!-- Interactive Terminal Showcase -->
+      <div style="text-align: center; margin-bottom: 24px;">
+        <div style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 9999px; background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 8px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+          Interactive Terminal & MCP Inspector
+        </div>
+        <h2 style="font-size: clamp(1.4rem, 2.5vw, 1.85rem); font-weight: 700; color: var(--ink); letter-spacing: -0.02em;">
+          Inspect The Live Agent Session
+        </h2>
+        <p style="font-size: 0.95rem; color: var(--ink-secondary); max-width: 600px; margin: 4px auto 0;">
+          Switch between Claude Code CLI, the FastMCP servers, and the universal AGENT.md blueprint.
+        </p>
       </div>
 
       <!-- Live Developer Stage (Hero Showcase) -->
@@ -1395,6 +1605,19 @@ mcp = FastMCP(<span style="color: #a5d6ff;">"ghost-cua-gemini"</span>)
           btn.style.color = '';
         }, 2000);
       });
+    }
+
+    // Video smooth scroll & play
+    function playLaunchVideo(e) {
+      if (e) e.preventDefault();
+      const el = document.getElementById('video-demo');
+      const v = document.getElementById('ghost-cua-video');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      if (v) {
+        v.play().catch(() => {});
+      }
     }
 
     // Initialize both tab sets on page load

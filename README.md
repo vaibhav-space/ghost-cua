@@ -7,16 +7,16 @@
 [![Platform: macOS](https://img.shields.io/badge/Platform-macOS-black.svg?logo=apple&logoColor=white)](https://apple.com)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg?logo=python&logoColor=white)](https://python.org)
 [![Protocol: MCP](https://img.shields.io/badge/Protocol-MCP-8B5CF6.svg)](https://modelcontextprotocol.io)
-[![Live Demo](https://img.shields.io/badge/Website-Live%20Demo-2563eb.svg)](https://vaibhav-space.github.io/ghost-cua/)
+[![Website](https://img.shields.io/badge/Website-Official%20Landing%20Page-2563eb.svg)](https://vaibhav-space.github.io/ghost-cua/)
 
-🌐 **[Explore the Interactive Landing Page & Live Simulator →](https://vaibhav-space.github.io/ghost-cua/)**
+🌐 **[Explore the Official Website & Interactive Landing Page →](https://vaibhav-space.github.io/ghost-cua/)**
 
 <p align="center">
-  <a href="brag-output/brag.mp4">
-    <img src="brag-output/brag.jpg" alt="GhostCUA Launch Demo" width="800" style="border-radius: 12px; box-shadow: 0 12px 32px rgba(0,0,0,0.12);" />
+  <a href="https://vaibhav-space.github.io/ghost-cua/#video-demo">
+    <img src="assets/ghost-cua-launch.jpg" alt="GhostCUA 18-Second Launch Demo" width="800" style="border-radius: 12px; box-shadow: 0 12px 32px rgba(0,0,0,0.12);" />
   </a>
   <br />
-  <em>🎬 <a href="brag-output/brag.mp4">Watch the 18-second launch video demo</a></em>
+  <em>🎬 <strong><a href="https://vaibhav-space.github.io/ghost-cua/#video-demo">Watch the 18-second launch video demo on the website</a></strong> · <a href="assets/ghost-cua-launch.mp4">Direct 1080p MP4</a></em>
 </p>
 
 ---
