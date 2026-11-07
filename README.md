@@ -13,10 +13,10 @@
 
 <p align="center">
   <a href="https://vaibhav-space.github.io/ghost-cua/#video-demo">
-    <img src="assets/ghost-cua-launch.jpg" alt="GhostCUA 18-Second Launch Demo" width="800" style="border-radius: 12px; box-shadow: 0 12px 32px rgba(0,0,0,0.12);" />
+    <img src="assets/ghost-cua-launch.jpg" alt="GhostCUA Launch Demo" width="800" style="border-radius: 12px; box-shadow: 0 12px 32px rgba(0,0,0,0.12);" />
   </a>
   <br />
-  <em>🎬 <strong><a href="https://vaibhav-space.github.io/ghost-cua/#video-demo">Watch the 18-second launch video demo on the website</a></strong> · <a href="assets/ghost-cua-launch.mp4">Direct 1080p MP4</a></em>
+  <em>🎬 <strong><a href="https://vaibhav-space.github.io/ghost-cua/#video-demo">Watch the launch video demo on the website</a></strong> · <a href="assets/ghost-cua-launch.mp4">Direct MP4</a></em>
 </p>
 
 ---
@@ -89,7 +89,7 @@ GhostCUA bypasses macOS WindowServer layer-switching through deep OS-level primi
 ### 1. Prerequisites
 - macOS (Apple Silicon or Intel)
 - Python 3.10+
-- Accessibility permissions enabled for Terminal / your IDE
+- Accessibility permissions granted to Terminal / your IDE in **System Settings → Privacy & Security → Accessibility**
 
 ### 2. Installation
 ```bash
@@ -132,7 +132,18 @@ python gemini_background.py \
 
 ## MCP Server Integration (For Coding Agents)
 
-To connect GhostCUA to **Claude Code, Cursor, Zed, Codex, or Antigravity**, add this to your MCP configuration (`~/.gemini/antigravity/mcp_config.json`, `.cursor/mcp.json`, or `claude_desktop_config.json`):
+### Option A: One-line setup for Claude Code (CLI)
+Run directly in your terminal:
+```bash
+# Add Gemini multimodal video QA & analysis
+claude mcp add ghost-cua-gemini /path/to/ghost-cua/.venv/bin/python /path/to/ghost-cua/gemini_mcp.py
+
+# Add Meta AI live Instagram trend research
+claude mcp add ghost-cua-meta-ai /path/to/ghost-cua/.venv/bin/python /path/to/ghost-cua/meta_ai_mcp.py
+```
+
+### Option B: JSON Config (Cursor, Antigravity, Zed, Codex)
+Add to your MCP configuration (`.cursor/mcp.json`, `~/.gemini/antigravity/mcp_config.json`, or `claude_desktop_config.json`):
 
 ```json
 {
